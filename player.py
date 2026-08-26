@@ -1,5 +1,5 @@
 #player movement and collision detection
-#import pygame as pg
+import pygame as pg
 import settings as st
 import math
 
@@ -19,10 +19,22 @@ class Player:
     def update(self, dt: float):
         # Update the player's position based on its direction, speed, and elapsed time
         dir_x, dir_y = self.get_direction()
-        self.x += dir_x * self.speed * dt
-        self.y += dir_y * self.speed * dt
+        #accumulated movement
+        dx, dy = 0, 0
+        #movment of this frame
+        move_x = dir_x * self.speed * dt  
+        move_y = dir_y * self.speed * dt
+        keys = pg.key.get_pressed()
+        if keys[pg.K_w]:  # Move forward
+            dx += move_x
+            dy += move_y
+
+        self.x += dx
+        self.y += dy
+
 
 #checking for player direction
 #p1 = Player()
 #dir_x , dir_y = p1.get_direction()
 #print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")
+      

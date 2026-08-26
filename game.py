@@ -2,6 +2,7 @@
 
 import pygame as pg
 import settings as st
+from player import Player
 
 class Game:
     def __init__(self):
@@ -11,6 +12,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.dt = 0.0
         self.running = True
+        self.player = Player()  # Create a player instance 
 
     def handle_events(self):
         for event in pg.event.get():
@@ -20,7 +22,7 @@ class Game:
 
     def update(self, dt: float):
         # Update game state here
-        pass
+        self.player.update(dt)  # Update the player with the elapsed time
 
     def render(self):
         self.screen.fill(st.BACKGROUND_COLOR)  # Clear the screen
