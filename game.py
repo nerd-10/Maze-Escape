@@ -36,7 +36,9 @@ class Game:
             self.render()
 
 
+'''
 if __name__ == "__main__":
     game = Game()
     game.run()
     pg.quit()  
+'''

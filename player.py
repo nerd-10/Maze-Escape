@@ -15,8 +15,14 @@ class Player:
         dir_y = math.sin(self.angle)
 
         return dir_x , dir_y
+    
+    def update(self, dt: float):
+        # Update the player's position based on its direction, speed, and elapsed time
+        dir_x, dir_y = self.get_direction()
+        self.x += dir_x * self.speed * dt
+        self.y += dir_y * self.speed * dt
 
-
+#checking for player direction
 #p1 = Player()
 #dir_x , dir_y = p1.get_direction()
 #print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")
