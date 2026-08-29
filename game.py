@@ -1,5 +1,4 @@
 #main game class
-
 import pygame as pg
 import settings as st
 from player import Player
@@ -29,7 +28,10 @@ class Game:
         player_pos = (self.player.x * st.WORLD_SCALE, self.player.y * st.WORLD_SCALE) #player postion to screen postion
         pg.draw.circle(self.screen, (255, 255, 255), player_pos, st.DEBUG_PLAYER_RADIUS)  # Draw the player as a circle
         player_direction = self.player.get_direction()
-        line_end = (player_pos[0] + player_direction[0] * st.DEBUG_DIRECTION_LENGTH * st.WORLD_SCALE, player_pos[1] + player_direction[1] * st.DEBUG_DIRECTION_LENGTH * st.WORLD_SCALE) #calculating a direction-line endpoint using a fixed debug length.
+        line_end = (
+            player_pos[0] + player_direction[0] * st.DEBUG_DIRECTION_LENGTH * st.WORLD_SCALE, 
+            player_pos[1] + player_direction[1] * st.DEBUG_DIRECTION_LENGTH * st.WORLD_SCALE
+        ) #calculating a direction-line endpoint using a fixed debug length.
         pg.draw.line(self.screen, (255, 0, 0), player_pos, line_end, 2)  # drawing a line from the player to that endpoint
         # Render game objects here
         pg.display.flip()  # Update the display
