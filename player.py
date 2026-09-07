@@ -19,26 +19,30 @@ class Player:
     
     def update(self, dt: float):
         # Update the player's state based on input and elapsed time.
-        dir_x, dir_y = self.get_direction()
-        #accumulated movement
-        dx, dy = 0, 0
-        delta_angle = 0
-        #movment of this frame
-        move_x = dir_x * self.speed * dt  
-        move_y = dir_y * self.speed * dt
         keys = pg.key.get_pressed()
-        if keys[pg.K_w]:  # Move forward
-            dx += move_x
-            dy += move_y
+        delta_angle = 0.0
         if keys[pg.K_a]:  # Turn left
             delta_angle -= self.rotation_speed * dt
         if keys[pg.K_d]:  # Turn right
             delta_angle += self.rotation_speed * dt
-
-        self.x += dx
-        self.y += dy
         self.angle += delta_angle
 
+        dir_x, dir_y = self.get_direction()
+        #accumulated movement
+        dx, dy = 0, 0
+        #movment of this frame
+        move_x = dir_x * self.speed * dt  
+        move_y = dir_y * self.speed * dt
+
+        if keys[pg.K_w]:  # Move forward
+            dx += move_x
+            dy += move_y
+       
+
+        
+        self.x += dx
+        self.y += dy
+        
 
 #checking for player direction
 #p1 = Player()
