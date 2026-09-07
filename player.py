@@ -8,6 +8,7 @@ class Player:
         self.x , self.y = st.PLAYER_POS # x = 5.0 , y = 3.0
         self.angle = st.PLAYER_ANGLE # angle = 4.71239
         self.speed = st.PLAYER_SPEED # speed = 2 world units per second
+        self.rotation_speed = st.PLAYER_ROTATION_SPEED # rotation speed in radians per second
 
     def get_direction(self):
         #calculate the direction vector based on the player's angle
@@ -17,10 +18,11 @@ class Player:
         return dir_x , dir_y
     
     def update(self, dt: float):
-        # Update the player's position based on its direction, speed, and elapsed time
+        # Update the player's state based on input and elapsed time.
         dir_x, dir_y = self.get_direction()
         #accumulated movement
         dx, dy = 0, 0
+        delta_angle = 0
         #movment of this frame
         move_x = dir_x * self.speed * dt  
         move_y = dir_y * self.speed * dt
@@ -28,9 +30,14 @@ class Player:
         if keys[pg.K_w]:  # Move forward
             dx += move_x
             dy += move_y
+        if keys[pg.K_a]:  # Turn left
+            delta_angle -= self.rotation_speed * dt
+        if keys[pg.K_d]:  # Turn right
+            delta_angle += self.rotation_speed * dt
 
         self.x += dx
         self.y += dy
+        self.angle += delta_angle
 
 
 #checking for player direction
