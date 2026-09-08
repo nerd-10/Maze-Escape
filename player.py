@@ -26,10 +26,11 @@ class Player:
         if keys[pg.K_d]:  # Turn right
             delta_angle += self.rotation_speed * dt
         self.angle += delta_angle
+        self.angle %= 2 * math.pi  # Keep the orientation within one revolution to maintain a predictable state.
 
         dir_x, dir_y = self.get_direction()
         #accumulated movement
-        dx, dy = 0, 0
+        dx, dy = 0.0, 0.0
         #movment of this frame
         move_x = dir_x * self.speed * dt  
         move_y = dir_y * self.speed * dt
@@ -37,9 +38,10 @@ class Player:
         if keys[pg.K_w]:  # Move forward
             dx += move_x
             dy += move_y
-       
+        if keys[pg.K_s]: # Move backward
+            dx -= move_x
+            dy -= move_y
 
-        
         self.x += dx
         self.y += dy
         
