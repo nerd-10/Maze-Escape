@@ -9,8 +9,7 @@ class Player:
         self.angle = st.PLAYER_ANGLE # angle = 4.71239
         self.speed = st.PLAYER_SPEED # speed = 2 world units per second
         self.rotation_speed = st.PLAYER_ROTATION_SPEED # rotation speed in radians per second
-        #self.diagonal_movement_correction = 1/math.sqrt(2) # correction factor for diagonal movement
-
+        
     def get_direction(self):
         #calculate the direction vector based on the player's angle
         dir_x = math.cos(self.angle)
@@ -21,6 +20,7 @@ class Player:
     def update(self, dt: float):
         # Update the player's state based on input and elapsed time.
         keys = pg.key.get_pressed()
+
         delta_angle = 0.0
         if keys[pg.K_LEFT]:  # Turn left
             delta_angle -= self.rotation_speed * dt
@@ -29,27 +29,35 @@ class Player:
         self.angle += delta_angle
         self.angle %= 2 * math.pi  # Keep the orientation within one revolution to maintain a predictable state.
 
-        dir_x, dir_y = self.get_direction()
+        forward_x, forward_y = self.get_direction()
+        right_x = -forward_y
+        right_y = forward_x
         #accumulated movement
         dx, dy = 0.0, 0.0
         #movment of this frame
-        move_x = dir_x * self.speed * dt  
-        move_y = dir_y * self.speed * dt
+        #move_x = dir_x * self.speed * dt  
+        #move_y = dir_y * self.speed * dt
         
         if keys[pg.K_w]:  # Move forward
-            
-            dx += move_x
-            dy += move_y
+            dx += forward_x
+            dy += forward_y
         if keys[pg.K_s]: # Move backward
-            dx -= move_x
-            dy -= move_y
+            dx -= forward_x
+            dy -= forward_y
         if keys[pg.K_a]: # Strrafe left
-            dx += move_y
-            dy -= move_x
+            dx -= right_x
+            dy -= right_y
         if keys[pg.K_d]: # Strafe right
-            dx -= move_y
-            dy += move_x
+            dx += right_x
+            dy += right_y
 
+        magnitude = math.sqrt(dx * dx + dy * dy)
+        if magnitude > 0:
+            dx/= magnitude
+            dy/= magnitude
+
+        dx*= self.speed * dt
+        dy*= self.speed * dt
 
         self.x += dx
         self.y += dy
