@@ -9,6 +9,7 @@ class Player:
         self.angle = st.PLAYER_ANGLE # angle = 4.71239
         self.speed = st.PLAYER_SPEED # speed = 2 world units per second
         self.rotation_speed = st.PLAYER_ROTATION_SPEED # rotation speed in radians per second
+        #self.diagonal_movement_correction = 1/math.sqrt(2) # correction factor for diagonal movement
 
     def get_direction(self):
         #calculate the direction vector based on the player's angle
@@ -21,9 +22,9 @@ class Player:
         # Update the player's state based on input and elapsed time.
         keys = pg.key.get_pressed()
         delta_angle = 0.0
-        if keys[pg.K_a]:  # Turn left
+        if keys[pg.K_LEFT]:  # Turn left
             delta_angle -= self.rotation_speed * dt
-        if keys[pg.K_d]:  # Turn right
+        if keys[pg.K_RIGHT]:  # Turn right
             delta_angle += self.rotation_speed * dt
         self.angle += delta_angle
         self.angle %= 2 * math.pi  # Keep the orientation within one revolution to maintain a predictable state.
@@ -34,13 +35,21 @@ class Player:
         #movment of this frame
         move_x = dir_x * self.speed * dt  
         move_y = dir_y * self.speed * dt
-
+        
         if keys[pg.K_w]:  # Move forward
+            
             dx += move_x
             dy += move_y
         if keys[pg.K_s]: # Move backward
             dx -= move_x
             dy -= move_y
+        if keys[pg.K_a]: # Strrafe left
+            dx += move_y
+            dy -= move_x
+        if keys[pg.K_d]: # Strafe right
+            dx -= move_y
+            dy += move_x
+
 
         self.x += dx
         self.y += dy
