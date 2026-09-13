@@ -11,7 +11,7 @@ DEBUG_DIRECTION_LENGTH = 1.0
 
 #player settings
 
-PLAYER_POS = 5.0, 3.0 #x ,y
+PLAYER_POS = 4.0, 3.0 #x ,y
 PLAYER_ANGLE = 4.71239 #angle in radians 3 * math.pi / 2, 270°
 PLAYER_SPEED = 2 #movement speed 2 world units per second
 PLAYER_ROTATION_SPEED = 2 #rotation speed in radians per second

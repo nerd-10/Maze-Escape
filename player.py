@@ -1,11 +1,13 @@
 #player movement and collision detection
 import pygame as pg
 import settings as st
+from maze import Maze
 import math
 
 class Player:
-    def __init__(self):
+    def __init__(self,maze = Maze):
         self.x , self.y = st.PLAYER_POS # x = 5.0 , y = 3.0
+        self.maze = Maze()
         self.angle = st.PLAYER_ANGLE # angle = 4.71239
         self.speed = st.PLAYER_SPEED # speed = 2 world units per second
         self.rotation_speed = st.PLAYER_ROTATION_SPEED # rotation speed in radians per second
@@ -59,8 +61,12 @@ class Player:
         dx*= self.speed * dt
         dy*= self.speed * dt
 
-        self.x += dx
-        self.y += dy
+        new_x = self.x + dx
+        new_y = self.y + dy
+
+        if self.maze.is_walkable(new_x , new_y):
+            self.x = new_x
+            self.y = new_y
         
 
 #checking for player direction

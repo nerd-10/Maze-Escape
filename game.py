@@ -2,16 +2,18 @@
 import pygame as pg
 import settings as st
 from player import Player
+from maze import Maze
 
 class Game:
     def __init__(self):
         pg.init()
         self.screen = pg.display.set_mode((st.WIDTH, st.HEIGHT))
+        self.maze = Maze()
         pg.display.set_caption(st.WINDOW_TITLE)
         self.clock = pg.time.Clock()
         self.dt = 0.0
         self.running = True
-        self.player = Player()  # Create a player instance 
+        self.player = Player(self.maze)  # Create a player instance 
 
     def handle_events(self):
         for event in pg.event.get():
