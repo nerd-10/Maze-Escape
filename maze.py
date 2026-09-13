@@ -5,7 +5,7 @@ class Maze:
     def __init__(self):
         self.grid =[   #1 is wall and 0 is path
             [1,1,1,1,1], 
-            [1,1,0,0,1],
+            [1,1,0,1,1],
             [1,0,0,0,1],
             [1,1,1,0,1],
             [1,1,1,1,1]

@@ -6,12 +6,18 @@ HALF_WIDTH , HALF_HEIGHT = WIDTH // 2 , HEIGHT // 2
 FPS = 60
 BACKGROUND_COLOR = (100, 100, 100)  # RGB color for background
 WORLD_SCALE = 64 #size of a single world unit in pixels
+
+#debug settings
+
 DEBUG_PLAYER_RADIUS = 10
 DEBUG_DIRECTION_LENGTH = 1.0
+DEBUG_WALL_COLOR = (0,0,0)
+DEBUG_PLAYER_COLOR = (255, 255, 255)
+DEBUG_DIRECTION_COLOR = (255, 0, 0)
 
 #player settings
 
-PLAYER_POS = 4.0, 3.0 #x ,y
+PLAYER_POS = 3.5, 3.5 #x ,y
 PLAYER_ANGLE = 4.71239 #angle in radians 3 * math.pi / 2, 270°
 PLAYER_SPEED = 2 #movement speed 2 world units per second
 PLAYER_ROTATION_SPEED = 2 #rotation speed in radians per second
