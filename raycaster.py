@@ -31,3 +31,13 @@ class Raycaster:
             else:
                 next_y_boundary = grid_y
 
+        # Calculate the distance to the next X and Y boundaries.
+        if step_x != 0:
+            t_x = (next_x_boundary - x) / dx
+        else:
+            t_x = float("inf")  # No movement in x direction
+
+        if step_y != 0:
+            t_y = (next_y_boundary - y) / dy
+        else:
+            t_y = float("inf")  # No movement in y direction
