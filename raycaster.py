@@ -89,15 +89,20 @@ class Raycaster:
         if hit_t is not None:
             hit_x = x + (hit_t * dx)
             hit_y = y + (hit_t * dy)
+            if hit_side == "x":
+                wall_pos = hit_y - int(hit_y)
+            else:
+                wall_pos = hit_x - int(hit_x)
         else:
             hit_x, hit_y = None, None
+            wall_pos = None
 
-        return hit_t, hit_x, hit_y, hit_side
+        return hit_t, hit_x, hit_y, hit_side, wall_pos
 
 
 #checking
 #r1 = Raycaster(Player(), Maze())
 #x, y = 2.5, 1.5
-#dx,dy = 0.866, 0.5
-#hit_t, hit_x, hit_y, hit_side = r1.cast_ray(x, y, dx, dy)    
-#print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}, {hit_side}")
+#dx,dy = 0 ,1
+#hit_t, hit_x, hit_y, hit_side, wall_pos = r1.cast_ray(x, y, dx, dy)    
+#print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}, {hit_side}, {wall_pos:.2f}")
