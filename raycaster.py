@@ -67,6 +67,7 @@ class Raycaster:
 
                 if self.maze.grid[grid_y][grid_x] == 1:
                     hit_t = t_x
+                    hit_side = "x"
                     break
                 t_x += delta_t_x
             else:
@@ -81,6 +82,7 @@ class Raycaster:
 
                 if self.maze.grid[grid_y][grid_x] == 1:
                     hit_t = t_y
+                    hit_side = "y"
                     break
                 t_y += delta_t_y
         #hit point (hit_x, hit_y) from existing hit_t
@@ -90,13 +92,12 @@ class Raycaster:
         else:
             hit_x, hit_y = None, None
 
-        return hit_t, hit_x, hit_y
-    
+        return hit_t, hit_x, hit_y, hit_side
 
 
 #checking
 #r1 = Raycaster(Player(), Maze())
 #x, y = 2.5, 1.5
 #dx,dy = 0.866, 0.5
-#hit_t, hit_x, hit_y = r1.cast_ray(x, y, dx, dy)    
-#print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}")
+#hit_t, hit_x, hit_y, hit_side = r1.cast_ray(x, y, dx, dy)    
+#print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}, {hit_side}")
