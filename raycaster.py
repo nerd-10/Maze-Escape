@@ -53,17 +53,35 @@ class Raycaster:
             delta_t_y = float("inf")  # No movement in y direction
 
         # Perform the DDA algorithm to find the wall hit
-        hit_wall = False
-        while not hit_wall:
-
+        hit_t = None  # Initialize hit_t to None
+        while True:
             if t_x < t_y:
                 grid_x+= step_x
-                t_x += delta_t_x
+                if (
+                    grid_y < 0
+                    or grid_y >= len(self.maze.grid)
+                    or grid_x < 0
+                    or grid_x >= len(self.maze.grid[grid_y])
+                ):
+                    break
+
                 if self.maze.grid[grid_y][grid_x] == 1:
-                    hit_wall = True
+                    hit_t = t_x
+                    break
+                t_x += delta_t_x
             else:
                 grid_y+= step_y
-                t_y += delta_t_y
+                if (
+                    grid_y < 0
+                    or grid_y >= len(self.maze.grid)
+                    or grid_x < 0
+                    or grid_x >= len(self.maze.grid[grid_y])
+                ):
+                    break
+
                 if self.maze.grid[grid_y][grid_x] == 1:
-                    hit_wall = True
-        
+                    hit_t = t_y
+                    break
+                t_y += delta_t_y
+
+        return hit_t
