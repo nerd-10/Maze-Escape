@@ -72,5 +72,4 @@ class Player:
 #checking for player direction
 #p1 = Player()
 #dir_x , dir_y = p1.get_direction()
-#print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")
-      
+#print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")    
