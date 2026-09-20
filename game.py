@@ -4,6 +4,7 @@ import settings as st
 import math as mt
 from player import Player
 from maze import Maze
+from raycaster import Raycaster
 
 class Game:
     def __init__(self):
@@ -15,6 +16,7 @@ class Game:
         self.dt = 0.0
         self.running = True
         self.player = Player(self.maze)  # Create a player instance that takes the maze as an argument
+        self.raycaster = Raycaster(self.player, self.maze)
 
     def handle_events(self):
         for event in pg.event.get():
@@ -36,14 +38,19 @@ class Game:
 
         fwd_x, fwd_y = self.player.get_direction()
         ray_angle = self.player.angle + (st.FOV / 2)
-        ray_x = mt.cos(ray_angle)
-        ray_y = mt.sin(ray_angle)
-        cos_theta = (fwd_x * ray_x + fwd_y * ray_y)
+        ray_dx = mt.cos(ray_angle)
+        ray_dy = mt.sin(ray_angle)
+        #ray_dx, ray_dy = self.player.get_direction()
+        hit_t, hit_x, hit_y, hit_side, wall_pos = self.raycaster.cast_ray(self.player.x,self.player.y, ray_dx,ray_dy)
+        cos_theta = (fwd_x * ray_dx + fwd_y * ray_dy)
+        camera_depth = hit_t * cos_theta
         #print(cos_theta)
-        hitt = 10
-        camera_depth = hitt * cos_theta
+        print("hit_t:", hit_t)
+        print("cos_theta:", cos_theta)
+        print("camera_depth:", camera_depth)
+        #hitt = 10
         projection_height = ((st.WALL_HEIGHT) * (st.HEIGHT/2) / ((camera_depth) * mt.tan(st.FOV/2)))
-        #print(projection_height)
+        print(f"Projection height is:",projection_height)
         player_pos = (self.player.x * st.WORLD_SCALE, self.player.y * st.WORLD_SCALE) #player postion to screen postion
         pg.draw.circle(self.screen, st.DEBUG_PLAYER_COLOR, player_pos, st.DEBUG_PLAYER_RADIUS)  # Draw the player as a circle
         player_direction = self.player.get_direction()
@@ -65,8 +72,8 @@ class Game:
 
 
 #debug run code
-#g = Game()
-#cq = g.render()
+g = Game()
+cq = g.render()
 #print(cq)
 
 #game.run()
