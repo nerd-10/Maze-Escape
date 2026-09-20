@@ -1,6 +1,7 @@
 #main game class
 import pygame as pg
 import settings as st
+import math as mt
 from player import Player
 from maze import Maze
 
@@ -13,7 +14,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.dt = 0.0
         self.running = True
-        self.player = Player(self.maze)  # Create a player instance 
+        self.player = Player(self.maze)  # Create a player instance that takes the maze as an argument
 
     def handle_events(self):
         for event in pg.event.get():
@@ -33,6 +34,16 @@ class Game:
                     wall_rect = pg.Rect(x * st.WORLD_SCALE, y * st.WORLD_SCALE, st.WORLD_SCALE, st.WORLD_SCALE)
                     pg.draw.rect(self.screen, st.DEBUG_WALL_COLOR, wall_rect) # draw the wall as a rectangle
 
+        fwd_x, fwd_y = self.player.get_direction()
+        ray_angle = self.player.angle + (st.FOV / 2)
+        ray_x = mt.cos(ray_angle)
+        ray_y = mt.sin(ray_angle)
+        cos_theta = (fwd_x * ray_x + fwd_y * ray_y)
+        #print(cos_theta)
+        hitt = 10
+        camera_depth = hitt * cos_theta
+        projection_height = ((st.WALL_HEIGHT) * (st.HEIGHT/2) / ((camera_depth) * mt.tan(st.FOV/2)))
+        #print(projection_height)
         player_pos = (self.player.x * st.WORLD_SCALE, self.player.y * st.WORLD_SCALE) #player postion to screen postion
         pg.draw.circle(self.screen, st.DEBUG_PLAYER_COLOR, player_pos, st.DEBUG_PLAYER_RADIUS)  # Draw the player as a circle
         player_direction = self.player.get_direction()
@@ -53,9 +64,10 @@ class Game:
             self.render()
 
 
-'''
-if __name__ == "__main__":
-    game = Game()
-    game.run()
-    pg.quit()  
-'''
+#debug run code
+#g = Game()
+#cq = g.render()
+#print(cq)
+
+#game.run()
+#pg.quit()

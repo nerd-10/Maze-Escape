@@ -6,6 +6,9 @@ HALF_WIDTH , HALF_HEIGHT = WIDTH // 2 , HEIGHT // 2
 FPS = 60
 BACKGROUND_COLOR = (100, 100, 100)  # RGB color for background
 WORLD_SCALE = 64 #size of a single world unit in pixels
+FOV = 1.0472 #60° in radians
+WALL_HEIGHT = 1.0 #height of the wall in world units
+#CAMERA_DEPTH = 2.0 #distance of the camera from the wall in world units
 
 #debug settings
 
