@@ -1,7 +1,7 @@
 #constants and configuration
 
 WINDOW_TITLE = "Maze Escape"
-RES = WIDTH , HEIGHT = 1200 , 600
+RES = WIDTH , HEIGHT = 1200 , 720
 HALF_WIDTH , HALF_HEIGHT = WIDTH // 2 , HEIGHT // 2
 FPS = 60
 BACKGROUND_COLOR = (100, 100, 100)  # RGB color for background
@@ -9,6 +9,8 @@ WORLD_SCALE = 64 #size of a single world unit in pixels
 FOV = 1.0472 #60° in radians
 WALL_HEIGHT = 1.0 #height of the wall in world units
 #CAMERA_DEPTH = 2.0 #distance of the camera from the wall in world units
+CEILING_COLOR = (1, 1, 1)
+FLOOR_COLOR = (0,255,255)
 
 #debug settings
 
