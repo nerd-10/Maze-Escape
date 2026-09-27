@@ -36,9 +36,6 @@ class Player:
         right_y = forward_x
         #accumulated movement
         dx, dy = 0.0, 0.0
-        #movment of this frame
-        #move_x = dir_x * self.speed * dt  
-        #move_y = dir_y * self.speed * dt
         
         if keys[pg.K_w]:  # Move forward
             dx += forward_x
