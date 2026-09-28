@@ -1,6 +1,6 @@
 #maze generating algorithm
-#"Given a world position, which maze cell contains it?
-
+#Given a world position, which maze cell contains it?
+import math as mt
 class Maze:
     def __init__(self):
         self.grid =[
@@ -16,7 +16,7 @@ class Maze:
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ]
-    
+        self.gateway_pos = (11.5, 9.5)
     def world_to_grid(self, x: float, y: float) -> tuple[int, int]:
         grid_x = int(x)
         grid_y = int(y)
@@ -31,3 +31,18 @@ class Maze:
             return False
         
         return self.grid[grid_y][grid_x] == 0 #because rows correspond to Y and columns correspond to X.
+    
+    def is_gateway(self, x: float, y: float) -> bool:
+        gateway_position_x, gateway_position_y = self.gateway_pos
+        dx = x - gateway_position_x
+        dy = y - gateway_position_y
+        dx_squared = dx**2
+        dy_squared = dy**2
+        distance_squared = dx_squared + dy_squared
+        distance = mt.sqrt(distance_squared)
+        active = False
+        gateway_activation_radius = 0.5
+        if distance <= gateway_activation_radius:
+            active = True
+        return active
+

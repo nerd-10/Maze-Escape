@@ -1,7 +1,6 @@
 #player movement and collision detection
 import pygame as pg
 import settings as st
-from maze import Maze
 import math
 
 class Player:
@@ -65,6 +64,8 @@ class Player:
         new_y = self.y + dy
         if self.maze.is_walkable(self.x , new_y):
             self.y = new_y
+        
+        return self.maze.is_gateway(self.x, self.y)
         
 
 #checking for player direction

@@ -27,7 +27,9 @@ class Game:
 
     def update(self, dt: float):
         # Update game state here
-        self.player.update(dt)  # Update the player with the elapsed time
+        gateway_reached = self.player.update(dt)  # Update the player with the elapsed time
+        if gateway_reached:
+            print("Gateway Reached!")
 
     def render(self):
         self.screen.fill(st.BACKGROUND_COLOR)  # Clear the screen
