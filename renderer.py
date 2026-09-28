@@ -26,10 +26,10 @@ class Renderer:
         #test_column = st.WIDTH//2
         #depth = (camera_height * focal_length)/vertical_depth
 
-        for test_row in range(int(horizon) + 1, st.HEIGHT):
+        for test_row in range(int(horizon) + 1, st.HEIGHT,4):
             vertical_depth = test_row - horizon
             depth = (camera_height * focal_length)/vertical_depth
-            for test_column in range(st.WIDTH):
+            for test_column in range(0, st.WIDTH, 4):
                 horizonatal_direction = test_column/(st.WIDTH-1)
                 c = 2*horizonatal_direction - 1
                 plane_x = c*(mt.tan(st.FOV/2))*right_vector_x
@@ -38,39 +38,10 @@ class Renderer:
                 dy = fwd_y + plane_y
                 world_x = self.player.x + depth * dx
                 world_y = self.player.y + depth * dy
-
-                if test_row == 480 and test_column == 0:
-                    print("For 480 and 0")
-                    print(f"Depth is: {depth}")
-                    print(f"World coordinates are:" f"({world_x:.5f}, {world_y:.5f})")
-                elif test_row == 480 and test_column == 1199:
-                    print("For 480 and 1199")
-                    print(f"Depth is: {depth}")
-                    print(f"World coordinates are:" f"({world_x:.5f}, {world_y:.5f})")
-                elif test_row == 600 and test_column == 0:
-                    print("For 600 and 0")
-                    print(f"Depth is: {depth}")
-                    print(f"World coordinates are:" f"({world_x:.5f}, {world_y:.5f})")
-                elif test_row == 600 and test_column == 1199:
-                    print("For 600 and 1199")
-                    print(f"Depth is: {depth}")
-                    print(f"World coordinates are:" f"({world_x:.5f}, {world_y:.5f})")
-        '''
-        print(f"vertical depth is: {vertical_depth}")
-        print(f"Horizon is: {horizon}")
-        print(f"Depth is: {depth}")
-        print(f"Focal Length is: {focal_length}")
-        print(f"Horizontal Direction is : {horizonatal_direction}")
-        print(f"c is : {c}")
-        print(f"{fwd_x:.2f},{fwd_y:.2f}")
-        print(f"Right vector is : {right_vector_x, right_vector_y}")
-        print(f"Plane x is : {plane_x:.5f}")
-        print(f"Plane y is : {plane_y:.5f}")
-        print(f"Camera plane offset is : "f"({plane_x:.5f}, {plane_y:.5f})")
-        print(f"Direction vector is : "f"({dx:.5f}, {dy:.5f})")
-        print(f"World coordinates are:" f"({world_x:.5f}, {world_y:.5f})")
-        '''
-
+                fraction_x = world_x - mt.floor(world_x)
+                shade_x = int(fraction_x * 255)
+                shade_tuple = (shade_x, shade_x, shade_x)
+                pg.draw.rect(self.screen, shade_tuple, (test_column, test_row, 4, 4))
         #rendering loop
         for screen_x in range(st.WIDTH):
             u = screen_x / (st.WIDTH - 1)
