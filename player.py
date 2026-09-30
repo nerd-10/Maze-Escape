@@ -1,23 +1,28 @@
-#player movement and collision detection
-import pygame as pg
-import settings as st
+# player movement and collision detection
 import math
 
+import pygame as pg
+
+import settings as st
+
+
 class Player:
-    def __init__(self,maze):
-        self.x , self.y = st.PLAYER_POS # x = 5.0 , y = 3.0
+    def __init__(self, maze):
+        self.x, self.y = st.PLAYER_POS  # x = 5.0 , y = 3.0
         self.maze = maze
-        self.angle = st.PLAYER_ANGLE # angle = 4.71239
-        self.speed = st.PLAYER_SPEED # speed = 2 world units per second
-        self.rotation_speed = st.PLAYER_ROTATION_SPEED # rotation speed in radians per second
-        
+        self.angle = st.PLAYER_ANGLE  # angle = 4.71239
+        self.speed = st.PLAYER_SPEED  # speed = 2 world units per second
+        self.rotation_speed = (
+            st.PLAYER_ROTATION_SPEED
+        )  # rotation speed in radians per second
+
     def get_direction(self):
-        #calculate the direction vector based on the player's angle
+        # calculate the direction vector based on the player's angle
         dir_x = math.cos(self.angle)
         dir_y = math.sin(self.angle)
 
-        return dir_x , dir_y
-    
+        return dir_x, dir_y
+
     def update(self, dt: float):
         # Update the player's state based on input and elapsed time.
         keys = pg.key.get_pressed()
@@ -28,47 +33,49 @@ class Player:
         if keys[pg.K_RIGHT]:  # Turn right
             delta_angle += self.rotation_speed * dt
         self.angle += delta_angle
-        self.angle %= 2 * math.pi  # Keep the orientation within one revolution to maintain a predictable state.
+        self.angle %= (
+            2 * math.pi
+        )  # Keep the orientation within one revolution to maintain a predictable state.
 
         forward_x, forward_y = self.get_direction()
         right_x = -forward_y
         right_y = forward_x
-        #accumulated movement
+        # accumulated movement
         dx, dy = 0.0, 0.0
-        
+
         if keys[pg.K_w]:  # Move forward
             dx += forward_x
             dy += forward_y
-        if keys[pg.K_s]: # Move backward
+        if keys[pg.K_s]:  # Move backward
             dx -= forward_x
             dy -= forward_y
-        if keys[pg.K_a]: # Strrafe left
+        if keys[pg.K_a]:  # Strrafe left
             dx -= right_x
             dy -= right_y
-        if keys[pg.K_d]: # Strafe right
+        if keys[pg.K_d]:  # Strafe right
             dx += right_x
             dy += right_y
 
         magnitude = math.sqrt(dx * dx + dy * dy)
         if magnitude > 0:
-            dx/= magnitude
-            dy/= magnitude
+            dx /= magnitude
+            dy /= magnitude
 
-        dx*= self.speed * dt
-        dy*= self.speed * dt
+        dx *= self.speed * dt
+        dy *= self.speed * dt
 
         new_x = self.x + dx
-        if self.maze.is_walkable(new_x,self.y):
+        if self.maze.is_walkable(new_x, self.y):
             self.x = new_x
 
         new_y = self.y + dy
-        if self.maze.is_walkable(self.x , new_y):
+        if self.maze.is_walkable(self.x, new_y):
             self.y = new_y
-        
-        return self.maze.is_gateway(self.x, self.y)
-        
 
-#checking for player direction
-#p1 = Player()
-#dir_x , dir_y = p1.get_direction()
-#print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")    
+        return self.maze.is_gateway(self.x, self.y)
+
+
+# checking for player direction
+# p1 = Player()
+# dir_x , dir_y = p1.get_direction()
+# print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")

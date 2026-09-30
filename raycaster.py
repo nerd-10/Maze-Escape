@@ -1,10 +1,11 @@
 # Core rendering algorithm
 # Cast ONE ray from the player and find the wall it hits
 
-#import pygame as pg
+# import pygame as pg
 from player import Player
 from maze import Maze
-#import settings as st
+# import settings as st
+
 
 class Raycaster:
     def __init__(self, player: Player, maze: Maze):
@@ -44,11 +45,11 @@ class Raycaster:
 
         # calculate delta t_x and delta t_y for stepping to the next grid cell
         if dx != 0:
-            delta_t_x = 1/abs(dx)
+            delta_t_x = 1 / abs(dx)
         else:
             delta_t_x = float("inf")  # No movement in x direction
         if dy != 0:
-            delta_t_y = 1/abs(dy)
+            delta_t_y = 1 / abs(dy)
         else:
             delta_t_y = float("inf")  # No movement in y direction
 
@@ -56,7 +57,7 @@ class Raycaster:
         hit_t = None  # Initialize hit_t to None
         while True:
             if t_x < t_y:
-                grid_x+= step_x
+                grid_x += step_x
                 if (
                     grid_y < 0
                     or grid_y >= len(self.maze.grid)
@@ -71,7 +72,7 @@ class Raycaster:
                     break
                 t_x += delta_t_x
             else:
-                grid_y+= step_y
+                grid_y += step_y
                 if (
                     grid_y < 0
                     or grid_y >= len(self.maze.grid)
@@ -85,7 +86,7 @@ class Raycaster:
                     hit_side = "y"
                     break
                 t_y += delta_t_y
-        #hit point (hit_x, hit_y) from existing hit_t
+        # hit point (hit_x, hit_y) from existing hit_t
         if hit_t is not None:
             hit_x = x + (hit_t * dx)
             hit_y = y + (hit_t * dy)
@@ -100,9 +101,9 @@ class Raycaster:
         return hit_t, hit_x, hit_y, hit_side, wall_pos
 
 
-#checking
-#r1 = Raycaster(Player(), Maze())
-#x, y = 2.5, 1.5
-#dx,dy = 0 ,1
-#hit_t, hit_x, hit_y, hit_side, wall_pos = r1.cast_ray(x, y, dx, dy)    
-#print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}, {hit_side}, {wall_pos:.2f}")
+# checking
+# r1 = Raycaster(Player(), Maze())
+# x, y = 2.5, 1.5
+# dx,dy = 0 ,1
+# hit_t, hit_x, hit_y, hit_side, wall_pos = r1.cast_ray(x, y, dx, dy)
+# print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}, {hit_side}, {wall_pos:.2f}")

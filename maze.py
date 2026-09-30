@@ -1,22 +1,13 @@
-#maze generating algorithm
-#Given a world position, which maze cell contains it?
+# maze generating algorithm
+# Given a world position, which maze cell contains it?
 import math as mt
+
+
 class Maze:
     def __init__(self):
-        self.grid =[
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-            [1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        ]
+        self.generate_new_maze()
         self.gateway_pos = (11.5, 9.5)
+
     def world_to_grid(self, x: float, y: float) -> tuple[int, int]:
         grid_x = int(x)
         grid_y = int(y)
@@ -25,13 +16,17 @@ class Maze:
 
     def is_walkable(self, x: float, y: float) -> bool:
         grid_x, grid_y = self.world_to_grid(x, y)
-        if grid_y < 0 or grid_y >=len(self.grid):
+        if grid_y < 0 or grid_y >= len(self.grid):
             return False
-        if grid_x < 0 or grid_x >=len(self.grid[grid_y]): #because self.grid[grid_y] is one row, and its length is the number of columns.
+        if (
+            grid_x < 0 or grid_x >= len(self.grid[grid_y])
+        ):  # because self.grid[grid_y] is one row, and its length is the number of columns.
             return False
-        
-        return self.grid[grid_y][grid_x] == 0 #because rows correspond to Y and columns correspond to X.
-    
+
+        return (
+            self.grid[grid_y][grid_x] == 0
+        )  # because rows correspond to Y and columns correspond to X.
+
     def is_gateway(self, x: float, y: float) -> bool:
         gateway_position_x, gateway_position_y = self.gateway_pos
         dx = x - gateway_position_x
@@ -46,3 +41,17 @@ class Maze:
             active = True
         return active
 
+    def generate_new_maze(self):
+        self.grid = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ]

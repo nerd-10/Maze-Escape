@@ -1,7 +1,10 @@
 # Screen drawing
-import pygame as pg
-import settings as st
 import math as mt
+
+import pygame as pg
+
+import settings as st
+
 
 class Renderer:
     def __init__(self, screen, player, raycaster):
@@ -10,53 +13,63 @@ class Renderer:
         self.raycaster = raycaster
 
     def render_walls(self):
-        #CEILING
-        pg.draw.rect(self.screen, st.CEILING_COLOR,(0, 0, st.WIDTH, st.HEIGHT//2))
-        #FLOOR
-        pg.draw.rect(self.screen, st.FLOOR_COLOR,(0, st.HEIGHT//2, st.WIDTH ,st.HEIGHT//2))
+        # CEILING
+        pg.draw.rect(self.screen, st.CEILING_COLOR, (0, 0, st.WIDTH, st.HEIGHT // 2))
+        # FLOOR
+        pg.draw.rect(
+            self.screen, st.FLOOR_COLOR, (0, st.HEIGHT // 2, st.WIDTH, st.HEIGHT // 2)
+        )
 
         fwd_x, fwd_y = self.player.get_direction()
         right_vector_x = -(fwd_y)
-        right_vector_y = (fwd_x)
-        horizon = st.HEIGHT/2
+        right_vector_y = fwd_x
+        horizon = st.HEIGHT / 2
         camera_height = 0.5
-        #test_row = 480
-        #vertical_depth = test_row - horizon
-        focal_length = (st.HEIGHT/2)/(mt.tan(st.FOV/2))
-        #test_column = st.WIDTH//2
-        #depth = (camera_height * focal_length)/vertical_depth
+        # test_row = 480
+        # vertical_depth = test_row - horizon
+        focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
+        # test_column = st.WIDTH//2
+        # depth = (camera_height * focal_length)/vertical_depth
 
-        for test_row in range(int(horizon) + 1, st.HEIGHT,4):
+        for test_row in range(int(horizon) + 1, st.HEIGHT, 4):
             vertical_depth = test_row - horizon
-            depth = (camera_height * focal_length)/vertical_depth
+            depth = (camera_height * focal_length) / vertical_depth
             for test_column in range(0, st.WIDTH, 4):
-                horizonatal_direction = test_column/(st.WIDTH-1)
-                c = 2*horizonatal_direction - 1
-                plane_x = c*(mt.tan(st.FOV/2))*right_vector_x
-                plane_y = c*(mt.tan(st.FOV/2))*right_vector_y
+                horizonatal_direction = test_column / (st.WIDTH - 1)
+                c = 2 * horizonatal_direction - 1
+                plane_x = c * (mt.tan(st.FOV / 2)) * right_vector_x
+                plane_y = c * (mt.tan(st.FOV / 2)) * right_vector_y
                 dx = fwd_x + plane_x
                 dy = fwd_y + plane_y
                 world_x = self.player.x + depth * dx
-                world_y = self.player.y + depth * dy
+                #world_y = self.player.y + depth * dy
                 fraction_x = world_x - mt.floor(world_x)
                 shade_x = int(fraction_x * 255)
                 shade_tuple = (shade_x, shade_x, shade_x)
                 pg.draw.rect(self.screen, shade_tuple, (test_column, test_row, 4, 4))
-        #rendering loop
+        # rendering loop
         for screen_x in range(st.WIDTH):
             u = screen_x / (st.WIDTH - 1)
-            ray_angle = (self.player.angle + (u - 0.5) * st.FOV)
+            ray_angle = self.player.angle + (u - 0.5) * st.FOV
             ray_dx = mt.cos(ray_angle)
             ray_dy = mt.sin(ray_angle)
-            hit_t, hit_x, hit_y, hit_side, wall_pos = (
-                self.raycaster.cast_ray(self.player.x,self.player.y, ray_dx,ray_dy)
-                )
+            hit_t, hit_x, hit_y, hit_side, wall_pos = self.raycaster.cast_ray(  # noqa: RUF059
+                self.player.x, self.player.y, ray_dx, ray_dy
+            )
             if hit_t is None:
                 continue
-            cos_theta = (fwd_x * ray_dx + fwd_y * ray_dy)
+            cos_theta = fwd_x * ray_dx + fwd_y * ray_dy
             camera_depth = hit_t * cos_theta
-            projection_height = ((st.WALL_HEIGHT) * (st.HEIGHT/2) / ((camera_depth) * mt.tan(st.FOV/2)))
-            screen_center_y = st.HEIGHT/2
-            top = screen_center_y - (projection_height/2)
-            #bottom = screen_center_y + (projection_height/2)
-            pg.draw.rect(self.screen, st.DEBUG_DIRECTION_COLOR,(screen_x, top, 1, projection_height))
+            projection_height = (
+                (st.WALL_HEIGHT)
+                * (st.HEIGHT / 2)
+                / ((camera_depth) * mt.tan(st.FOV / 2))
+            )
+            screen_center_y = st.HEIGHT / 2
+            top = screen_center_y - (projection_height / 2)
+            # bottom = screen_center_y + (projection_height/2)
+            pg.draw.rect(
+                self.screen,
+                st.DEBUG_DIRECTION_COLOR,
+                (screen_x, top, 1, projection_height),
+            )
