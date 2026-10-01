@@ -6,7 +6,6 @@ import math as mt
 class Maze:
     def __init__(self):
         self.generate_new_maze()
-        self.gateway_pos = (11.5, 9.5)
 
     def world_to_grid(self, x: float, y: float) -> tuple[int, int]:
         grid_x = int(x)
@@ -42,16 +41,22 @@ class Maze:
         return active
 
     def generate_new_maze(self):
-        self.grid = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-            [1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        rows = 11
+        cols = 15
+        self.grid = [[1 for _ in range(cols)] for _ in range(rows)]
+        start_x = 1
+        start_y = 1
+        directions = [
+            (0,-2) #up,
+            (0, 2) # down,
+            (-2, 0) #left,
+            (2, 0) #right
         ]
+        
+        self.grid[start_y][start_x] = 0
+        print(self.grid[1][1])
+        self.gateway_pos = (11.5, 9.5)
+        self.player_start_pos = 3.5, 3.5
+
+c = Maze()
+print(c)

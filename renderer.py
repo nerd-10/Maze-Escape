@@ -42,7 +42,7 @@ class Renderer:
                 dx = fwd_x + plane_x
                 dy = fwd_y + plane_y
                 world_x = self.player.x + depth * dx
-                #world_y = self.player.y + depth * dy
+                # world_y = self.player.y + depth * dy
                 fraction_x = world_x - mt.floor(world_x)
                 shade_x = int(fraction_x * 255)
                 shade_tuple = (shade_x, shade_x, shade_x)

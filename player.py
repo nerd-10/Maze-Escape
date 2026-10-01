@@ -8,8 +8,8 @@ import settings as st
 
 class Player:
     def __init__(self, maze):
-        self.x, self.y = st.PLAYER_POS  # x = 5.0 , y = 3.0
         self.maze = maze
+        self.x, self.y = self.maze.player_start_pos
         self.angle = st.PLAYER_ANGLE  # angle = 4.71239
         self.speed = st.PLAYER_SPEED  # speed = 2 world units per second
         self.rotation_speed = (
@@ -73,6 +73,9 @@ class Player:
             self.y = new_y
 
         return self.maze.is_gateway(self.x, self.y)
+
+    def reset_player_position(self):
+        self.x, self.y = self.maze.player_start_pos
 
 
 # checking for player direction

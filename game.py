@@ -45,11 +45,11 @@ class Game:
             self.maze_completed = True
             self.maze.generate_new_maze()
             self.reset_maze_run()
+            self.player.reset_player_position()  # Reset player position after maze completion
 
     def reset_maze_run(self):
         self.elapsed_time = 0.0
         self.maze_completed = False
-
 
     def render(self):
         self.screen.fill(st.BACKGROUND_COLOR)  # Clear the screen
