@@ -1,6 +1,7 @@
 # maze generating algorithm
 # Given a world position, which maze cell contains it?
 import math as mt
+import random
 
 
 class Maze:
@@ -47,16 +48,48 @@ class Maze:
         start_x = 1
         start_y = 1
         directions = [
-            (0,-2) #up,
-            (0, 2) # down,
-            (-2, 0) #left,
-            (2, 0) #right
+            (0, -2),  # up
+            (0, 2),  # down
+            (-2, 0),  # left
+            (2, 0),  # right
         ]
-        
-        self.grid[start_y][start_x] = 0
-        print(self.grid[1][1])
+        stack = []
+        while True:
+            valid_directions = []
+            for dx, dy in directions:
+                candidate_x = start_x + dx
+                candidate_y = start_y + dy
+
+                # check candidate is inside the maze and not on the outer boundary.
+                if (
+                    1 <= candidate_x < cols - 1
+                    and 1 <= candidate_y < rows - 1
+                    and self.grid[candidate_y][candidate_x] == 1
+                ):
+                    valid_directions.append((dx, dy))
+
+            if not valid_directions:
+                if stack:
+                    start_x, start_y = stack.pop()
+                    continue
+                else:
+                    break
+
+            dx, dy = random.choice(valid_directions)
+            stack.append((start_x, start_y))
+            candidate_x = start_x + dx
+            candidate_y = start_y + dy
+            wall_x = start_x + (dx // 2)
+            wall_y = start_y + (dy // 2)
+            self.grid[start_y][start_x] = 0
+            self.grid[wall_y][wall_x] = 0
+            self.grid[candidate_y][candidate_x] = 0
+            start_x = candidate_x
+            start_y = candidate_y
+        print("maze generated")
         self.gateway_pos = (11.5, 9.5)
         self.player_start_pos = 3.5, 3.5
 
+
 c = Maze()
-print(c)
+print(c.grid)
