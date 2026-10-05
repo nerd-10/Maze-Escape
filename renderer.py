@@ -7,10 +7,11 @@ import settings as st
 
 
 class Renderer:
-    def __init__(self, screen, player, raycaster):
+    def __init__(self, screen, player, raycaster, maze):
         self.screen = screen
         self.player = player
         self.raycaster = raycaster
+        self.maze = maze
 
     def render_walls(self):
         # CEILING
@@ -73,3 +74,11 @@ class Renderer:
                 st.DEBUG_DIRECTION_COLOR,
                 (screen_x, top, 1, projection_height),
             )
+        gateway_x, gateway_y = self.maze.gateway_pos
+        player_x = self.player.x
+        player_y = self.player.y
+        relative_x = gateway_x - player_x
+        relative_y = gateway_y - player_y
+        print(f"Player position: ({player_x}, {player_y})")
+        print(f"Gateway position: ({gateway_x}, {gateway_y})")
+        print(f"Relative position: ({relative_x}, {relative_y})")

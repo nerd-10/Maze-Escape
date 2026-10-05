@@ -21,7 +21,7 @@ class Game:
             self.maze
         )  # Create a player instance that takes the maze as an argument
         self.raycaster = Raycaster(self.player, self.maze)
-        self.renderer = Renderer(self.screen, self.player, self.raycaster)
+        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze)
         self.maze_completed = False
         self.elapsed_time = 0.0
         self.completion_time = None

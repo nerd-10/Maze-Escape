@@ -74,7 +74,6 @@ class Maze:
                     continue
                 else:
                     break
-
             dx, dy = random.choice(valid_directions)
             stack.append((start_x, start_y))
             candidate_x = start_x + dx
@@ -86,10 +85,31 @@ class Maze:
             self.grid[candidate_y][candidate_x] = 0
             start_x = candidate_x
             start_y = candidate_y
-        print("maze generated")
-        self.gateway_pos = (11.5, 9.5)
-        self.player_start_pos = 3.5, 3.5
 
+        gateway_candidates = []
+        for y in range(1, rows - 1):
+            for x in range( 1, cols - 1):
+                if self.grid[y][x] == 0:
+                    gateway_candidates.append((x, y))
 
-c = Maze()
-print(c.grid)
+        farthest_cell = None
+        farthest_distance = -1
+        for x, y in gateway_candidates:
+            dx = x - 1
+            dy = y - 1
+            distance = mt.sqrt(dx**2 + dy**2)
+            if distance > farthest_distance:
+                farthest_distance = distance
+                farthest_cell = (x, y)
+        gateway_x, gateway_y = farthest_cell
+        print("Gateway candidates:", gateway_candidates)
+        print("Farthest cell:", farthest_cell)
+        print("up:", self.grid[gateway_y - 1][gateway_x])
+        print("down:", self.grid[gateway_y + 1][gateway_x])
+        print("left:", self.grid[gateway_y][gateway_x - 1])
+        print("right:", self.grid[gateway_y][gateway_x + 1])
+        self.gateway_pos = (farthest_cell[0] + 0.5, farthest_cell[1] + 0.5)  # center of the cell
+        self.player_start_pos = 1.5, 1.5
+
+C = Maze()
+print(C.grid)
