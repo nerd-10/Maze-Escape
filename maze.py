@@ -102,12 +102,6 @@ class Maze:
                 farthest_distance = distance
                 farthest_cell = (x, y)
         gateway_x, gateway_y = farthest_cell
-        print("Gateway candidates:", gateway_candidates)
-        print("Farthest cell:", farthest_cell)
-        print("up:", self.grid[gateway_y - 1][gateway_x])
-        print("down:", self.grid[gateway_y + 1][gateway_x])
-        print("left:", self.grid[gateway_y][gateway_x - 1])
-        print("right:", self.grid[gateway_y][gateway_x + 1])
         self.gateway_pos = (farthest_cell[0] + 0.5, farthest_cell[1] + 0.5)  # center of the cell
         self.player_start_pos = 1.5, 1.5
 

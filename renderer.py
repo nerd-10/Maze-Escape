@@ -80,17 +80,17 @@ class Renderer:
         camera_x = relative_x * right_vector_x + relative_y * right_vector_y
         camera_depth = relative_x * fwd_x + relative_y * fwd_y
         if camera_depth <= 0:
-            print("Gateway is behind the player.")
+            pass  # The gateway is behind the player, do not render
         else:
            screen_x = (
                (camera_x / camera_depth) * focal_length + (st.WIDTH / 2)
            )
-           print(f"Screen X position: {screen_x}")
-        gateway_angle = mt.atan2(camera_x, camera_depth)
-        print(f"camera_x: {camera_x}, camera_depth: {camera_depth}")
-        print(f"Player position: ({player_x}, {player_y})")
-        print(f"Gateway position: ({gateway_x}, {gateway_y})")
-        print(f"Relative position: ({relative_x}, {relative_y})")
-        print(f"Camera coordinates: ({camera_x}, {camera_depth})")
-        print(f"Gateway angle: {gateway_angle}")
-        
+           #gateway_angle = mt.atan2(camera_x, camera_depth)
+           gateway_screen_height = (
+                (st.GATEWAY_HEIGHT)
+                * (st.HEIGHT / 2)
+                / ((camera_depth) * mt.tan(st.FOV / 2))
+            )
+           screen_center_y = st.HEIGHT / 2
+           top = screen_center_y - (gateway_screen_height / 2)
+           pg.draw.rect(self.screen, "yellow", (screen_x, top, 20, gateway_screen_height))
