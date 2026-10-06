@@ -111,5 +111,3 @@ class Maze:
         self.gateway_pos = (farthest_cell[0] + 0.5, farthest_cell[1] + 0.5)  # center of the cell
         self.player_start_pos = 1.5, 1.5
 
-C = Maze()
-print(C.grid)

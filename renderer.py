@@ -15,7 +15,9 @@ class Renderer:
 
     def render_walls(self):
         # CEILING
-        pg.draw.rect(self.screen, st.CEILING_COLOR, (0, 0, st.WIDTH, st.HEIGHT // 2))
+        pg.draw.rect(
+            self.screen, st.CEILING_COLOR, (0, 0, st.WIDTH, st.HEIGHT // 2)
+            )
         # FLOOR
         pg.draw.rect(
             self.screen, st.FLOOR_COLOR, (0, st.HEIGHT // 2, st.WIDTH, st.HEIGHT // 2)
@@ -26,11 +28,7 @@ class Renderer:
         right_vector_y = fwd_x
         horizon = st.HEIGHT / 2
         camera_height = 0.5
-        # test_row = 480
-        # vertical_depth = test_row - horizon
         focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
-        # test_column = st.WIDTH//2
-        # depth = (camera_height * focal_length)/vertical_depth
 
         for test_row in range(int(horizon) + 1, st.HEIGHT, 4):
             vertical_depth = test_row - horizon
@@ -79,6 +77,20 @@ class Renderer:
         player_y = self.player.y
         relative_x = gateway_x - player_x
         relative_y = gateway_y - player_y
+        camera_x = relative_x * right_vector_x + relative_y * right_vector_y
+        camera_depth = relative_x * fwd_x + relative_y * fwd_y
+        if camera_depth <= 0:
+            print("Gateway is behind the player.")
+        else:
+           screen_x = (
+               (camera_x / camera_depth) * focal_length + (st.WIDTH / 2)
+           )
+           print(f"Screen X position: {screen_x}")
+        gateway_angle = mt.atan2(camera_x, camera_depth)
+        print(f"camera_x: {camera_x}, camera_depth: {camera_depth}")
         print(f"Player position: ({player_x}, {player_y})")
         print(f"Gateway position: ({gateway_x}, {gateway_y})")
         print(f"Relative position: ({relative_x}, {relative_y})")
+        print(f"Camera coordinates: ({camera_x}, {camera_depth})")
+        print(f"Gateway angle: {gateway_angle}")
+        
