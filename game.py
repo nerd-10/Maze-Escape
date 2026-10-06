@@ -53,7 +53,7 @@ class Game:
 
     def render(self):
         self.screen.fill(st.BACKGROUND_COLOR)  # Clear the screen
-        self.renderer.render_walls()
+        self.renderer.render()
         self.screen.blit(
             pg.font.Font(None, 24).render(
                 f"FPS: {self.clock.get_fps():.1f}", True, "white"

@@ -88,7 +88,7 @@ class Maze:
 
         gateway_candidates = []
         for y in range(1, rows - 1):
-            for x in range( 1, cols - 1):
+            for x in range(1, cols - 1):
                 if self.grid[y][x] == 0:
                     gateway_candidates.append((x, y))
 
@@ -102,6 +102,8 @@ class Maze:
                 farthest_distance = distance
                 farthest_cell = (x, y)
         gateway_x, gateway_y = farthest_cell
-        self.gateway_pos = (farthest_cell[0] + 0.5, farthest_cell[1] + 0.5)  # center of the cell
+        self.gateway_pos = (
+            farthest_cell[0] + 0.5,
+            farthest_cell[1] + 0.5,
+        )  # center of the cell
         self.player_start_pos = 1.5, 1.5
-
