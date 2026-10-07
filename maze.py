@@ -107,3 +107,7 @@ class Maze:
             farthest_cell[1] + 0.5,
         )  # center of the cell
         self.player_start_pos = 1.5, 1.5
+        if self.grid[1][2] == 0:
+            self.player_start_angle = 0
+        elif self.grid[2][1] == 0:
+            self.player_start_angle = mt.pi/2

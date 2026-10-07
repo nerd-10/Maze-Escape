@@ -10,7 +10,7 @@ class Player:
     def __init__(self, maze):
         self.maze = maze
         self.x, self.y = self.maze.player_start_pos
-        self.angle = st.PLAYER_ANGLE  # angle = 4.71239
+        self.angle = self.maze.player_start_angle
         self.speed = st.PLAYER_SPEED  # speed = 2 world units per second
         self.rotation_speed = (
             st.PLAYER_ROTATION_SPEED
