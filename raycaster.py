@@ -1,10 +1,9 @@
 # Core rendering algorithm
 # Cast ONE ray from the player and find the wall it hits
 
-# import pygame as pg
 from player import Player
 from maze import Maze
-# import settings as st
+
 
 
 class Raycaster:
@@ -20,7 +19,7 @@ class Raycaster:
         step_x = 1 if dx > 0 else -1 if dx < 0 else 0
         step_y = 1 if dy > 0 else -1 if dy < 0 else 0
 
-        # Calculate the first X and Y boundary distances.
+        # Calculate the first X and Y grid boundaries.
         if step_x != 0:
             if step_x > 0:
                 next_x_boundary = grid_x + 1
@@ -55,6 +54,7 @@ class Raycaster:
 
         # Perform the DDA algorithm to find the wall hit
         hit_t = None  # Initialize hit_t to None
+        hit_side = None  # Initialize hit_side to None
         while True:
             if t_x < t_y:
                 grid_x += step_x
@@ -99,11 +99,3 @@ class Raycaster:
             wall_pos = None
 
         return hit_t, hit_x, hit_y, hit_side, wall_pos
-
-
-# checking
-# r1 = Raycaster(Player(), Maze())
-# x, y = 2.5, 1.5
-# dx,dy = 0 ,1
-# hit_t, hit_x, hit_y, hit_side, wall_pos = r1.cast_ray(x, y, dx, dy)
-# print(f"{hit_t:.2f}, {hit_x:.2f}, {hit_y:.2f}, {hit_side}, {wall_pos:.2f}")

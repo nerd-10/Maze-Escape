@@ -19,7 +19,7 @@ class Game:
         self.running = True
         self.player = Player(
             self.maze
-        )  # Create a player instance that takes the maze as an argument
+        ) 
         self.raycaster = Raycaster(self.player, self.maze)
         self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze)
         self.maze_completed = False
@@ -32,7 +32,6 @@ class Game:
                 self.running = False
 
     def update(self, dt: float):
-        # Update game state here
         gateway_reached = self.player.update(
             dt
         )  # Update the player with the elapsed time
@@ -52,7 +51,7 @@ class Game:
         self.maze_completed = False
 
     def render(self):
-        self.screen.fill(st.BACKGROUND_COLOR)  # Clear the screen
+        self.screen.fill(st.BACKGROUND_COLOR)  
         self.renderer.render()
         self.screen.blit(
             pg.font.Font(None, 24).render(

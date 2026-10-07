@@ -8,10 +8,10 @@ BACKGROUND_COLOR = (100, 100, 100)  # RGB color for background
 WORLD_SCALE = 64  # size of a single world unit in pixels
 FOV = 1.0472  # 60° in radians
 WALL_HEIGHT = 1.0  # height of the wall in world units
-CAMERA_DEPTH = 2.0  # distance of the camera from the wall in world units
 CEILING_COLOR = (1, 1, 1)
 FLOOR_COLOR = (0, 255, 255)
 GATEWAY_HEIGHT = 1.0  # height of the gateway in world units
+
 # debug settings
 
 DEBUG_PLAYER_RADIUS = 10
@@ -22,7 +22,5 @@ DEBUG_DIRECTION_COLOR = (255, 0, 0)
 
 # player settings
 
-PLAYER_POS = 3.5, 3.5  # x ,y
-PLAYER_ANGLE = 4.71239  # angle in radians 3 * math.pi / 2, 270°
 PLAYER_SPEED = 2  # movement speed 2 world units per second
 PLAYER_ROTATION_SPEED = 2  # rotation speed in radians per second

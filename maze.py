@@ -31,15 +31,10 @@ class Maze:
         gateway_position_x, gateway_position_y = self.gateway_pos
         dx = x - gateway_position_x
         dy = y - gateway_position_y
-        dx_squared = dx**2
-        dy_squared = dy**2
-        distance_squared = dx_squared + dy_squared
-        distance = mt.sqrt(distance_squared)
-        active = False
+        distance_squared = dx**2 + dy**2
         gateway_activation_radius = 0.5
-        if distance <= gateway_activation_radius:
-            active = True
-        return active
+        
+        return distance_squared <= gateway_activation_radius**2
 
     def generate_new_maze(self):
         rows = 11
@@ -97,11 +92,10 @@ class Maze:
         for x, y in gateway_candidates:
             dx = x - 1
             dy = y - 1
-            distance = mt.sqrt(dx**2 + dy**2)
-            if distance > farthest_distance:
-                farthest_distance = distance
+            distance_squared = dx**2 + dy**2
+            if distance_squared > farthest_distance:
+                farthest_distance = distance_squared
                 farthest_cell = (x, y)
-        gateway_x, gateway_y = farthest_cell
         self.gateway_pos = (
             farthest_cell[0] + 0.5,
             farthest_cell[1] + 0.5,
@@ -110,4 +104,4 @@ class Maze:
         if self.grid[1][2] == 0:
             self.player_start_angle = 0
         elif self.grid[2][1] == 0:
-            self.player_start_angle = mt.pi/2
+            self.player_start_angle = mt.pi / 2

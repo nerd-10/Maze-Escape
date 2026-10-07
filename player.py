@@ -11,10 +11,10 @@ class Player:
         self.maze = maze
         self.x, self.y = self.maze.player_start_pos
         self.angle = self.maze.player_start_angle
-        self.speed = st.PLAYER_SPEED  # speed = 2 world units per second
+        self.speed = st.PLAYER_SPEED 
         self.rotation_speed = (
             st.PLAYER_ROTATION_SPEED
-        )  # rotation speed in radians per second
+        ) 
 
     def get_direction(self):
         # calculate the direction vector based on the player's angle
@@ -27,12 +27,10 @@ class Player:
         # Update the player's state based on input and elapsed time.
         keys = pg.key.get_pressed()
 
-        delta_angle = 0.0
         if keys[pg.K_LEFT]:  # Turn left
-            delta_angle -= self.rotation_speed * dt
+            self.angle -= self.rotation_speed * dt
         if keys[pg.K_RIGHT]:  # Turn right
-            delta_angle += self.rotation_speed * dt
-        self.angle += delta_angle
+            self.angle += self.rotation_speed * dt
         self.angle %= (
             2 * math.pi
         )  # Keep the orientation within one revolution to maintain a predictable state.
@@ -49,7 +47,7 @@ class Player:
         if keys[pg.K_s]:  # Move backward
             dx -= forward_x
             dy -= forward_y
-        if keys[pg.K_a]:  # Strrafe left
+        if keys[pg.K_a]:  # Strafe left
             dx -= right_x
             dy -= right_y
         if keys[pg.K_d]:  # Strafe right
@@ -76,9 +74,4 @@ class Player:
 
     def reset_player_position(self):
         self.x, self.y = self.maze.player_start_pos
-
-
-# checking for player direction
-# p1 = Player()
-# dir_x , dir_y = p1.get_direction()
-# print(f"Player direction: ({dir_x:.2f}, {dir_y:.2f})")
+        self.angle = self.maze.player_start_angle
