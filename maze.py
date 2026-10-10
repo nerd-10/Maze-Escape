@@ -2,11 +2,13 @@
 # Given a world position, which maze cell contains it?
 import math as mt
 import random
+from collections import deque
 
 
 class Maze:
     def __init__(self):
         self.generate_new_maze()
+        self.bfs_distances()
 
     def world_to_grid(self, x: float, y: float) -> tuple[int, int]:
         grid_x = int(x)
@@ -33,7 +35,7 @@ class Maze:
         dy = y - gateway_position_y
         distance_squared = dx**2 + dy**2
         gateway_activation_radius = 0.5
-        
+
         return distance_squared <= gateway_activation_radius**2
 
     def generate_new_maze(self):
@@ -81,27 +83,56 @@ class Maze:
             start_x = candidate_x
             start_y = candidate_y
 
-        gateway_candidates = []
-        for y in range(1, rows - 1):
-            for x in range(1, cols - 1):
-                if self.grid[y][x] == 0:
-                    gateway_candidates.append((x, y))
-
-        farthest_cell = None
-        farthest_distance = -1
-        for x, y in gateway_candidates:
-            dx = x - 1
-            dy = y - 1
-            distance_squared = dx**2 + dy**2
-            if distance_squared > farthest_distance:
-                farthest_distance = distance_squared
-                farthest_cell = (x, y)
+        distances = self.bfs_distances()
+        farthest_cell = max(distances, key = distances.get)
         self.gateway_pos = (
             farthest_cell[0] + 0.5,
-            farthest_cell[1] + 0.5,
-        )  # center of the cell
+            farthest_cell[1] + 0.5
+        )
+
+        gateway_x, gateway_y = farthest_cell
+        up = self.grid[gateway_y - 1][gateway_x]
+        down = self.grid[gateway_y + 1][gateway_x]
+        left = self.grid[gateway_y][gateway_x - 1]
+        right = self.grid[gateway_y][gateway_x + 1]
+        if up == 0:
+            self.gateway_orientation = "up"
+        elif down == 0:
+            self.gateway_orientation = "down"
+        elif left == 0:
+            self.gateway_orientation = "left"
+        elif right == 0:
+            self.gateway_orientation = "right"
+            
         self.player_start_pos = 1.5, 1.5
         if self.grid[1][2] == 0:
             self.player_start_angle = 0
         elif self.grid[2][1] == 0:
             self.player_start_angle = mt.pi / 2
+    def bfs_distances(self):
+            start = (1, 1)
+            queue = deque([start])
+            distances = {start: 0}
+            directions = [
+                (0, -1),  # up
+                (0, 1),  # down
+                (-1, 0),  # left
+                (1, 0),  # right
+            ]
+            while queue:
+                current_x, current_y = queue.popleft()
+                for dx, dy in directions:
+                    neighbor_x = current_x + dx
+                    neighbor_y = current_y + dy
+                    neighbor = (neighbor_x, neighbor_y)
+
+                    if (
+                        self.is_walkable(neighbor_x, neighbor_y)
+                        and neighbor not in distances
+                    ):
+                        distances[neighbor] = distances[(current_x, current_y)] + 1
+                        queue.append(neighbor)
+            return distances
+    
+
+distacne =  Maze()
