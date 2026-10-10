@@ -81,6 +81,20 @@ class Renderer:
         right_vector_y = fwd_x
         focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
         gateway_x, gateway_y = self.maze.gateway_pos
+        gateway_orientation = self.maze.gateway_orientation
+        render_x, render_y = gateway_x, gateway_y
+        if gateway_orientation == "up":
+            render_y = gateway_y + 0.5 - 0.01
+        elif gateway_orientation == "down":
+            render_y = gateway_y - 0.5 + 0.01
+        elif gateway_orientation == "left":
+            render_x = gateway_x + 0.5 - 0.01
+        elif gateway_orientation == "right":
+            render_x = gateway_x - 0.5 + 0.01
+        half_width = 0.8/2
+        endpoint_a = (render_x - half_width, render_y)
+        endpoint_b = (render_x + half_width, render_y)
+
         player_x = self.player.x
         player_y = self.player.y
         relative_x = gateway_x - player_x
@@ -102,11 +116,11 @@ class Renderer:
             if hit_t_gateway is not None:
                cos_theta_gateway = fwd_x * ray_dx_gateway + fwd_y * ray_dy_gateway
                wall_camera_depth = hit_t_gateway * cos_theta_gateway
-               gateway_screen_height = (
-                   st.GATEWAY_HEIGHT
-                   * (st.HEIGHT / 2)
-                   / camera_depth * mt.tan(st.FOV / 2)
-                   )
-               top = screen_center_y - (gateway_screen_height / 2)
-               if camera_depth < wall_camera_depth:
-                   pg.draw.rect(self.screen, "yellow", (gateway_screen_x, top, 20, gateway_screen_height))
+            gateway_screen_height = (
+                st.GATEWAY_HEIGHT
+                * (st.HEIGHT / 2)
+                / (camera_depth * mt.tan(st.FOV / 2))
+            )
+            top = screen_center_y - (gateway_screen_height / 2)
+            if camera_depth < wall_camera_depth:
+                pg.draw.rect(self.screen, "yellow", (gateway_screen_x, top, 20, gateway_screen_height))
