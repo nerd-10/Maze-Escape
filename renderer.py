@@ -26,10 +26,68 @@ class Renderer:
         self.render_walls()
         self.render_gateway()
 
+    def get_camera_vectors(self):
+        forward_x, forward_y = self.player.get_direction()
+        right_x = -forward_y
+        right_y = forward_x
+
+        return forward_x, forward_y, right_x, right_y
+
+    def project_world_point(self, world_x, world_y):
+        forward_x, forward_y, right_vector_x, right_vector_y = (self.get_camera_vectors())
+        relative_x = world_x - self.player.x
+        relative_y = world_y - self.player.y
+        camera_x = relative_x * right_vector_x + relative_y * right_vector_y
+        camera_depth = relative_x * forward_x + relative_y * forward_y
+
+        return camera_x, camera_depth
+
+    def project_to_screen(self, camera_x, camera_y):
+        focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
+        screen_x = (camera_x / camera_y) * focal_length + (st.WIDTH / 2)
+
+        return screen_x
+
+    def is_point_visible(self, screen_x, gateway_depth):
+        u = screen_x/(st.WIDTH - 1)
+        ray_angle = self.player.angle + (u - 0.5) * st.FOV
+        ray_dx = mt.cos(ray_angle)
+        ray_dy = mt.sin(ray_angle)
+        hit_t, *_ = self.raycaster.cast_ray(self.player.x, self.player.y, ray_dx, ray_dy)
+        if hit_t is None:
+            return True
+        forward_x, forward_y, *_ = self.get_camera_vectors()
+        cos_theta = forward_x * ray_dx + forward_y * ray_dy
+        if cos_theta <= 0:
+            return False
+        
+        wall_camera_depth = hit_t * cos_theta
+
+        return gateway_depth < wall_camera_depth
+    
+    def clip_segment_near_plane(self, point_a, point_b, near_depth=0.05):
+        x_a, depth_a = point_a
+        x_b, depth_b = point_b
+
+        if depth_a < near_depth and depth_b < near_depth:
+            return None
+
+        if depth_a < near_depth:
+            t = (near_depth - depth_a) / (depth_b - depth_a)
+            x_a = x_a + t * (x_b - x_a)
+            depth_a = near_depth
+
+        elif depth_b < near_depth:
+            t = (near_depth - depth_b) / (depth_a - depth_b)
+            x_b = x_b + t * (x_a - x_b)
+            depth_b = near_depth
+
+        return (x_a, depth_a), (x_b, depth_b)
+
+
+
     def render_walls(self):
-        fwd_x, fwd_y = self.player.get_direction()
-        right_vector_x = -(fwd_y)
-        right_vector_y = fwd_x
+        fwd_x, fwd_y, right_vector_x, right_vector_y = self.get_camera_vectors()
         horizon = st.HEIGHT / 2
         camera_height = 0.5
         focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
@@ -76,10 +134,6 @@ class Renderer:
             )
     
     def render_gateway(self):      
-        fwd_x, fwd_y = self.player.get_direction()
-        right_vector_x = -(fwd_y)
-        right_vector_y = fwd_x
-        focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
         gateway_x, gateway_y = self.maze.gateway_pos
         gateway_orientation = self.maze.gateway_orientation
         render_x, render_y = gateway_x, gateway_y
@@ -92,35 +146,40 @@ class Renderer:
         elif gateway_orientation == "right":
             render_x = gateway_x - 0.5 + 0.01
         half_width = 0.8/2
-        endpoint_a = (render_x - half_width, render_y)
-        endpoint_b = (render_x + half_width, render_y)
+        if gateway_orientation in ("up", "down"):
+            endpoint_a = (render_x - half_width, render_y)
+            endpoint_b = (render_x + half_width, render_y)
+        else:
+            endpoint_a = (render_x, render_y - half_width)
+            endpoint_b = (render_x, render_y + half_width)
 
-        player_x = self.player.x
-        player_y = self.player.y
-        relative_x = gateway_x - player_x
-        relative_y = gateway_y - player_y
-        camera_x = relative_x * right_vector_x + relative_y * right_vector_y
-        camera_depth = relative_x * fwd_x + relative_y * fwd_y
-        if camera_depth > 0:
-            gateway_screen_x = (
-               (camera_x / camera_depth) * focal_length + (st.WIDTH / 2)
-           )
-            screen_center_y = st.HEIGHT / 2
-            u = gateway_screen_x / (st.WIDTH - 1)
-            ray_angle_gateway = self.player.angle + (u - 0.5) * st.FOV
-            ray_dx_gateway = mt.cos(ray_angle_gateway)
-            ray_dy_gateway = mt.sin(ray_angle_gateway)
-            hit_t_gateway, *_ = self.raycaster.cast_ray(
-                self.player.x, self.player.y, ray_dx_gateway, ray_dy_gateway
+
+        # Project the two endpoints into camera space.
+        camera_x_a, camera_depth_a = self.project_world_point(*endpoint_a)
+        camera_x_b, camera_depth_b = self.project_world_point(*endpoint_b)
+        clipped_points = self.clip_segment_near_plane(
+            (camera_x_a, camera_depth_a),
+            (camera_x_b, camera_depth_b),
             )
-            if hit_t_gateway is not None:
-               cos_theta_gateway = fwd_x * ray_dx_gateway + fwd_y * ray_dy_gateway
-               wall_camera_depth = hit_t_gateway * cos_theta_gateway
-            gateway_screen_height = (
-                st.GATEWAY_HEIGHT
-                * (st.HEIGHT / 2)
-                / (camera_depth * mt.tan(st.FOV / 2))
-            )
-            top = screen_center_y - (gateway_screen_height / 2)
-            if camera_depth < wall_camera_depth:
-                pg.draw.rect(self.screen, "yellow", (gateway_screen_x, top, 20, gateway_screen_height))
+        if clipped_points is None:
+            return
+
+        (camera_x_a, camera_depth_a), (camera_x_b, camera_depth_b) = clipped_points
+
+        screen_x_a = self.project_to_screen(camera_x_a, camera_depth_a)
+        screen_x_b = self.project_to_screen(camera_x_b, camera_depth_b)
+
+        if screen_x_a is not None and screen_x_b is not None:
+            gateway_screen_width = abs(screen_x_b - screen_x_a)
+            average_depth = (camera_depth_a + camera_depth_b)/2
+            gateway_screen_x = (screen_x_a + screen_x_b) / 2
+            if average_depth > 0 and self.is_point_visible(gateway_screen_x, average_depth):
+                gateway_screen_height = (
+                    st.GATEWAY_HEIGHT
+                    * (st.HEIGHT / 2)
+                    / ( average_depth* mt.tan(st.FOV / 2))
+                    )
+                screen_center_y = st.HEIGHT / 2
+                top = screen_center_y - (gateway_screen_height / 2)
+                left = min(screen_x_a, screen_x_b)
+                pg.draw.rect(self.screen, "yellow", (left, top, gateway_screen_width, gateway_screen_height))
