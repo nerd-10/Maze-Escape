@@ -6,6 +6,7 @@ from maze import Maze
 from player import Player
 from raycaster import Raycaster
 from renderer import Renderer
+from gateway import Gateway
 
 
 class Game:
@@ -21,7 +22,8 @@ class Game:
             self.maze
         ) 
         self.raycaster = Raycaster(self.player, self.maze)
-        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze)
+        self.gateway =  Gateway("assets/door/door.png")
+        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze, self.gateway)
         self.maze_completed = False
         self.elapsed_time = 0.0
         self.completion_time = None

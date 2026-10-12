@@ -7,11 +7,12 @@ import settings as st
 
 
 class Renderer:
-    def __init__(self, screen, player, raycaster, maze):
+    def __init__(self, screen, player, raycaster, maze, gateway):
         self.screen = screen
         self.player = player
         self.raycaster = raycaster
         self.maze = maze
+        self.gateway = gateway
 
 
     def render(self):
@@ -42,9 +43,9 @@ class Renderer:
 
         return camera_x, camera_depth
 
-    def project_to_screen(self, camera_x, camera_y):
+    def project_to_screen(self, camera_x, camera_depth):
         focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
-        screen_x = (camera_x / camera_y) * focal_length + (st.WIDTH / 2)
+        screen_x = (camera_x / camera_depth) * focal_length + (st.WIDTH / 2)
 
         return screen_x
 
@@ -169,17 +170,30 @@ class Renderer:
         screen_x_a = self.project_to_screen(camera_x_a, camera_depth_a)
         screen_x_b = self.project_to_screen(camera_x_b, camera_depth_b)
 
-        if screen_x_a is not None and screen_x_b is not None:
-            gateway_screen_width = abs(screen_x_b - screen_x_a)
-            average_depth = (camera_depth_a + camera_depth_b)/2
-            gateway_screen_x = (screen_x_a + screen_x_b) / 2
-            if average_depth > 0 and self.is_point_visible(gateway_screen_x, average_depth):
-                gateway_screen_height = (
-                    st.GATEWAY_HEIGHT
-                    * (st.HEIGHT / 2)
-                    / ( average_depth* mt.tan(st.FOV / 2))
-                    )
-                screen_center_y = st.HEIGHT / 2
-                top = screen_center_y - (gateway_screen_height / 2)
-                left = min(screen_x_a, screen_x_b)
-                pg.draw.rect(self.screen, "yellow", (left, top, gateway_screen_width, gateway_screen_height))
+        gateway_screen_width = abs(screen_x_b - screen_x_a)
+        average_depth = (camera_depth_a + camera_depth_b)/2
+        gateway_screen_x = (screen_x_a + screen_x_b) / 2
+        if average_depth > 0 and self.is_point_visible(gateway_screen_x, average_depth):
+            gateway_screen_height = (
+                st.GATEWAY_HEIGHT
+                * (st.HEIGHT / 2)
+                / ( average_depth* mt.tan(st.FOV / 2))
+                )
+            screen_center_y = st.HEIGHT / 2
+            top = screen_center_y - (gateway_screen_height / 2)
+            left = min(screen_x_a, screen_x_b)
+            gateway_frame = self.gateway.frames[0]
+            max_sprite_width = st.WIDTH * 2
+            max_sprite_height = st.HEIGHT * 2
+
+            scaled_width = max(
+                1, min(int(gateway_screen_width), max_sprite_width)
+                )
+            scaled_height = max(
+                1, min(int(gateway_screen_height), max_sprite_height)
+                )
+            scaled_gateway = pg.transform.scale(
+                gateway_frame,
+                (scaled_width, scaled_height),
+                )
+            self.screen.blit(scaled_gateway, (left, top))
