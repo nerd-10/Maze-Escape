@@ -13,6 +13,7 @@ class Renderer:
         self.raycaster = raycaster
         self.maze = maze
         self.gateway = gateway
+        self.wall_depths = [float("inf")] * st.WIDTH
 
 
     def render(self):
@@ -88,6 +89,7 @@ class Renderer:
 
 
     def render_walls(self):
+        self.wall_depths = [float("inf")] * st.WIDTH
         fwd_x, fwd_y, right_vector_x, right_vector_y = self.get_camera_vectors()
         horizon = st.HEIGHT / 2
         camera_height = 0.5
@@ -121,6 +123,7 @@ class Renderer:
                 continue
             cos_theta = fwd_x * ray_dx + fwd_y * ray_dy
             camera_depth = hit_t * cos_theta
+            self.wall_depths[screen_x] = camera_depth
             projection_height = (
                 st.WALL_HEIGHT
                 * (st.HEIGHT / 2)
@@ -196,4 +199,15 @@ class Renderer:
                 gateway_frame,
                 (scaled_width, scaled_height),
                 )
-            self.screen.blit(scaled_gateway, (left, top))
+            for screen_x in range(
+                max(0, int(left)),
+                min(st.WIDTH, int(left + scaled_width)),
+                ):
+                wall_depth = self.wall_depths[screen_x]
+                if average_depth < wall_depth:
+                    source_x = screen_x - int(left)
+                    self.screen.blit(
+                        scaled_gateway,
+                        (screen_x, top),
+                        (source_x, 0, 1, scaled_height),
+                        )

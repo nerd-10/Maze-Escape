@@ -2,11 +2,11 @@
 import pygame as pg
 
 import settings as st
+from gateway import Gateway
 from maze import Maze
 from player import Player
 from raycaster import Raycaster
 from renderer import Renderer
-from gateway import Gateway
 
 
 class Game:

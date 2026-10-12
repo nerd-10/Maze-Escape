@@ -1,6 +1,7 @@
 # exit animation
 import pygame as pg
 
+
 class Gateway:
     def __init__(self,sprite_sheet_path):
         self.sprite_sheet = pg.image.load(
