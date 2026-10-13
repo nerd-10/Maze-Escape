@@ -61,6 +61,12 @@ class Game:
             ),
             (10, 10),
         )
+        self.screen.blit(
+            pg.font.Font(None, 24).render(
+                f"Elapsed Time: {self.elapsed_time:.2f}", True, "yellow"
+            ),
+            (10,40)
+        )
         pg.display.flip()  # Update the display
 
     def run(self):
