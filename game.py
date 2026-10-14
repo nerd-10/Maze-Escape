@@ -2,6 +2,7 @@
 import pygame as pg
 
 import settings as st
+from animation import Animation
 from gateway import Gateway
 from maze import Maze
 from player import Player
@@ -23,7 +24,8 @@ class Game:
         ) 
         self.raycaster = Raycaster(self.player, self.maze)
         self.gateway =  Gateway("assets/door/door.png")
-        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze, self.gateway)
+        self.gateway_animation = Animation(self.gateway.frames)
+        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze, self.gateway, self.gateway_animation)
         self.maze_completed = False
         self.elapsed_time = 0.0
         self.completion_time = None
@@ -34,6 +36,7 @@ class Game:
                 self.running = False
 
     def update(self, dt: float):
+        self.gateway_animation.update(dt)
         gateway_reached = self.player.update(
             dt
         )  # Update the player with the elapsed time

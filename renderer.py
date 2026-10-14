@@ -7,12 +7,13 @@ import settings as st
 
 
 class Renderer:
-    def __init__(self, screen, player, raycaster, maze, gateway):
+    def __init__(self, screen, player, raycaster, maze, gateway, gateway_animation):
         self.screen = screen
         self.player = player
         self.raycaster = raycaster
         self.maze = maze
         self.gateway = gateway
+        self.gateway_animation = gateway_animation
         self.wall_depths = [float("inf")] * st.WIDTH
 
     def render(self):
@@ -179,7 +180,7 @@ class Renderer:
             screen_center_y = st.HEIGHT / 2
             top = screen_center_y - (gateway_screen_height / 2)
             left = min(screen_x_a, screen_x_b)
-            gateway_frame = self.gateway.frames[0]
+            gateway_frame = self.gateway_animation.get_current_frame()
             max_sprite_width = st.WIDTH * 2
             max_sprite_height = st.HEIGHT * 2
 
