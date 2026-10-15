@@ -8,12 +8,18 @@ from maze import Maze
 from player import Player
 from raycaster import Raycaster
 from renderer import Renderer
+from texture import TextureManager
 
 
 class Game:
     def __init__(self):
         pg.init()
         self.screen = pg.display.set_mode((st.WIDTH, st.HEIGHT))
+        self.texture_manager = TextureManager(
+            "assets/floor/floor.png", 
+            "assets/wall_textures"
+            )
+        self.texture_manager.load_texture()
         self.maze = Maze()
         pg.display.set_caption(st.WINDOW_TITLE)
         self.clock = pg.time.Clock()
