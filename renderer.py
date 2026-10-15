@@ -122,7 +122,10 @@ class Renderer:
                     )
             if hit_t is None:
                 continue
-            texture = self.texture_manager.wall_textures[0]
+            
+            grid_x, grid_y = self.maze.world_to_grid(hit_x, hit_y)
+            texture_index = self.maze.wall_texture_indices[grid_y][grid_x]
+            texture = self.texture_manager.wall_textures[texture_index]
             texture_x = int(wall_pos * texture.get_width())
             texture_x = min(texture_x, texture.get_width() - 1)
             texture_column = texture.subsurface(
@@ -130,20 +133,31 @@ class Renderer:
             )
             cos_theta = fwd_x * ray_dx + fwd_y * ray_dy
             camera_depth = hit_t * cos_theta
+            # Reject invalid or extremely close wall hits.
+            if camera_depth <= 0.001:
+                continue
             self.wall_depths[screen_x] = camera_depth
             projection_height = (
                 st.WALL_HEIGHT * (st.HEIGHT / 2) / ((camera_depth) * mt.tan(st.FOV / 2))
             )
-            scaled_column = pg.transform.scale(
-                texture_column, 
-                (1, max(1, int(projection_height)))
-            )
             screen_center_y = st.HEIGHT / 2
             top = screen_center_y - (projection_height / 2)
+            bottom = screen_center_y + (projection_height / 2)
+
+            # Clip the wall to the visible screen area.
+            draw_top = max(0, int(top))
+            draw_bottom = min(st.HEIGHT, int(bottom))
+
+            if draw_bottom <= draw_top:
+                continue
+            scaled_column = pg.transform.scale(
+                texture_column,
+                (1, draw_bottom - draw_top)
+                )
             self.screen.blit(
-                scaled_column, 
-                (screen_x, int(top))
-            )
+                scaled_column,
+                (screen_x, draw_top)
+                )
 
     def render_gateway(self):
         gateway_x, gateway_y = self.maze.gateway_pos

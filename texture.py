@@ -18,10 +18,7 @@ class TextureManager:
         ).convert()
 
         wall_filenames = [
-            *(f"brick_wall_texture_{i}.png" for i in range(1,8)),
-            "moss_texture.png",
-            "moss_texture_2.png",
-            "moss_wall_texture.png"
+            *(f"brick_wall_texture_{i}.png" for i in range(1,8))
         ]
         for filename in wall_filenames:
             path = os.path.join(self.wall_directory, filename)

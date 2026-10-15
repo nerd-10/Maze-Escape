@@ -82,6 +82,13 @@ class Maze:
             self.grid[candidate_y][candidate_x] = 0
             start_x = candidate_x
             start_y = candidate_y
+            self.wall_texture_indices = [
+                [
+                    random.randrange(7) if self.grid[y][x] == 1 else -1
+                    for x in range(len(self.grid[y]))
+                ]
+                for y in range(len(self.grid))
+            ]
 
         distances = self.bfs_distances()
         farthest_cell = max(distances, key = distances.get)
