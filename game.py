@@ -31,7 +31,7 @@ class Game:
         self.raycaster = Raycaster(self.player, self.maze)
         self.gateway =  Gateway("assets/door/door.png")
         self.gateway_animation = Animation(self.gateway.frames)
-        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze, self.gateway, self.gateway_animation)
+        self.renderer = Renderer(self.screen, self.player, self.raycaster, self.maze, self.gateway, self.gateway_animation, self.texture_manager)
         self.maze_completed = False
         self.elapsed_time = 0.0
         self.completion_time = None

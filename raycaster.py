@@ -1,9 +1,8 @@
 # Core rendering algorithm
 # Cast ONE ray from the player and find the wall it hits
 
-from player import Player
 from maze import Maze
-
+from player import Player
 
 
 class Raycaster:

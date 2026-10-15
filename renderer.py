@@ -7,13 +7,14 @@ import settings as st
 
 
 class Renderer:
-    def __init__(self, screen, player, raycaster, maze, gateway, gateway_animation):
+    def __init__(self, screen, player, raycaster, maze, gateway, gateway_animation, texture_manager):
         self.screen = screen
         self.player = player
         self.raycaster = raycaster
         self.maze = maze
         self.gateway = gateway
         self.gateway_animation = gateway_animation
+        self.texture_manager = texture_manager
         self.wall_depths = [float("inf")] * st.WIDTH
 
     def render(self):
@@ -114,23 +115,34 @@ class Renderer:
             ray_angle = self.player.angle + (u - 0.5) * st.FOV
             ray_dx = mt.cos(ray_angle)
             ray_dy = mt.sin(ray_angle)
-            hit_t, *_ = self.raycaster.cast_ray(
-                self.player.x, self.player.y, ray_dx, ray_dy
-            )
+            hit_t, hit_x, hit_y, hit_side, wall_pos = (
+                self.raycaster.cast_ray(
+                    self.player.x, self.player.y, ray_dx, ray_dy
+                    )
+                    )
             if hit_t is None:
                 continue
+            texture = self.texture_manager.wall_textures[0]
+            texture_x = int(wall_pos * texture.get_width())
+            texture_x = min(texture_x, texture.get_width() - 1)
+            texture_column = texture.subsurface(
+                (texture_x, 0, 1, texture.get_height())
+            )
             cos_theta = fwd_x * ray_dx + fwd_y * ray_dy
             camera_depth = hit_t * cos_theta
             self.wall_depths[screen_x] = camera_depth
             projection_height = (
                 st.WALL_HEIGHT * (st.HEIGHT / 2) / ((camera_depth) * mt.tan(st.FOV / 2))
             )
+            scaled_column = pg.transform.scale(
+                texture_column, 
+                (1, max(1, int(projection_height)))
+            )
             screen_center_y = st.HEIGHT / 2
             top = screen_center_y - (projection_height / 2)
-            pg.draw.rect(
-                self.screen,
-                st.DEBUG_DIRECTION_COLOR,
-                (screen_x, top, 1, projection_height),
+            self.screen.blit(
+                scaled_column, 
+                (screen_x, int(top))
             )
 
     def render_gateway(self):
