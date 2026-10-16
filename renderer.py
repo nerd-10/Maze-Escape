@@ -174,20 +174,36 @@ class Renderer:
             top = screen_center_y - (projection_height / 2)
             bottom = screen_center_y + (projection_height / 2)
 
-            # Clip the wall to the visible screen area.
+                       # Clip the wall to the visible screen area.
             draw_top = max(0, int(top))
             draw_bottom = min(st.HEIGHT, int(bottom))
 
             if draw_bottom <= draw_top:
                 continue
+
+            # Calculate the visible portion of the original wall.
+            visible_top_ratio = (draw_top - top) / projection_height
+            visible_bottom_ratio = (draw_bottom - top) / projection_height
+
+            texture_height = texture.get_height()
+
+            texture_top = int(visible_top_ratio * texture_height)
+            texture_bottom = int(visible_bottom_ratio * texture_height)
+
+            texture_top = max(0, min(texture_top, texture_height - 1))
+            texture_bottom = max(texture_top + 1, min(texture_bottom, texture_height))
+
+            # Crop first, then scale only the visible texture portion.
+            visible_column = texture_column.subsurface(
+                (0, texture_top, 1, texture_bottom - texture_top)
+            )
+
             scaled_column = pg.transform.scale(
-                texture_column,
+                visible_column,
                 (1, draw_bottom - draw_top)
-                )
-            self.screen.blit(
-                scaled_column,
-                (screen_x, draw_top)
-                )
+            )
+
+            self.screen.blit(scaled_column, (screen_x, draw_top))
 
     def render_gateway(self):
         gateway_x, gateway_y = self.maze.gateway_pos
