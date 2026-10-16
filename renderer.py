@@ -21,11 +21,11 @@ class Renderer:
         # CEILING
         pg.draw.rect(self.screen, st.CEILING_COLOR, (0, 0, st.WIDTH, st.HEIGHT // 2))
         # FLOOR
-        pg.draw.rect(
-            self.screen, st.FLOOR_COLOR, (0, st.HEIGHT // 2, st.WIDTH, st.HEIGHT // 2)
-        )
-        self.render_walls()
+        #pg.draw.rect(
+         #   self.screen, st.FLOOR_COLOR, (0, st.HEIGHT // 2, st.WIDTH, st.HEIGHT // 2)
+        #)
         self.render_floor()
+        self.render_walls()
         self.render_gateway()
 
     def get_camera_vectors(self):
@@ -88,46 +88,57 @@ class Renderer:
 
         return (x_a, depth_a), (x_b, depth_b)
 
-    def render_walls(self):
-        self.wall_depths = [float("inf")] * st.WIDTH
-        fwd_x, fwd_y, right_vector_x, right_vector_y = self.get_camera_vectors()
+    def render_floor(self):
+        forward_x, forward_y, right_x, right_y = self.get_camera_vectors()
+
         horizon = st.HEIGHT / 2
         camera_height = 0.5
-        focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
+        focal_length = horizon / mt.tan(st.FOV / 2)
 
-        for test_row in range(int(horizon) + 1, st.HEIGHT, 4):
-            vertical_depth = test_row - horizon
-            depth = (camera_height * focal_length) / vertical_depth
-            for test_column in range(0, st.WIDTH, 4):
-                horizontal_direction = test_column / (st.WIDTH - 1)
-                c = 2 * horizontal_direction - 1
-                plane_x = c * (mt.tan(st.FOV / 2)) * right_vector_x
-                plane_y = c * (mt.tan(st.FOV / 2)) * right_vector_y
-                dx = fwd_x + plane_x
-                dy = fwd_y + plane_y
-                ray_length = mt.sqrt(dx * dx + dy * dy)
-                dx /= ray_length
-                dy /= ray_length
-                world_x = self.player.x + depth * dx
-                world_y = self.player.y + depth * dy
-                floor_texture = self.texture_manager.floor_texture
-                texture_width = floor_texture.get_width()
-                texture_height = floor_texture.get_height()
-                texture_x = int(
-                    (world_x - mt.floor(world_x)) * texture_width
-                )
-                texture_y = int(
-                    (world_y - mt.floor(world_y)) * texture_height
-                )
-                texture_x = max(0, min(texture_x, texture_width - 1))
-                texture_y = max(0, min(texture_y, texture_height - 1))
-                floor_colour = floor_texture.get_at((texture_x, texture_y))
+        floor_texture = self.texture_manager.floor_texture
+        texture_width = floor_texture.get_width()
+        texture_height = floor_texture.get_height()
 
-                pg.draw.rect(
-                    self.screen,
-                    floor_colour,
-                    (test_column, test_row, 4, 4)
-                )
+        # Camera rays through the left and right edges of the screen.
+        half_fov_width = mt.tan(st.FOV / 2)
+
+        left_ray_x = forward_x - half_fov_width * right_x
+        left_ray_y = forward_y - half_fov_width * right_y
+
+        right_ray_x = forward_x + half_fov_width * right_x
+        right_ray_y = forward_y + half_fov_width * right_y
+
+        for screen_y in range(int(horizon) + 1, st.HEIGHT, 4):
+            row_depth = (
+                camera_height * focal_length
+                / (screen_y - horizon)
+            )
+
+        for screen_x in range(0, st.WIDTH, 4):
+            u = screen_x / (st.WIDTH - 1)
+
+            ray_x = left_ray_x + u * (right_ray_x - left_ray_x)
+            ray_y = left_ray_y + u * (right_ray_y - left_ray_y)
+
+            world_x = self.player.x + row_depth * ray_x
+            world_y = self.player.y + row_depth * ray_y
+
+            texture_x = int(world_x * 64) % texture_width
+            texture_y = int(world_y * 64) % texture_height
+
+            floor_colour = floor_texture.get_at(
+                (texture_x, texture_y)
+            )
+
+            pg.draw.rect(
+                self.screen,
+                floor_colour,
+                (screen_x, screen_y, 4, 4)
+            )
+
+    def render_walls(self):
+        self.wall_depths = [float("inf")] * st.WIDTH
+        fwd_x, fwd_y, _, _ = self.get_camera_vectors()
         # rendering loop
         for screen_x in range(st.WIDTH):
             u = screen_x / (st.WIDTH - 1)
