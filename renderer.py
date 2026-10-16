@@ -1,4 +1,4 @@
-# Screen drawing
+    # Screen drawing
 import math as mt
 
 import pygame as pg
@@ -25,6 +25,7 @@ class Renderer:
             self.screen, st.FLOOR_COLOR, (0, st.HEIGHT // 2, st.WIDTH, st.HEIGHT // 2)
         )
         self.render_walls()
+        self.render_floor()
         self.render_gateway()
 
     def get_camera_vectors(self):
@@ -104,11 +105,29 @@ class Renderer:
                 plane_y = c * (mt.tan(st.FOV / 2)) * right_vector_y
                 dx = fwd_x + plane_x
                 dy = fwd_y + plane_y
+                ray_length = mt.sqrt(dx * dx + dy * dy)
+                dx /= ray_length
+                dy /= ray_length
                 world_x = self.player.x + depth * dx
-                fraction_x = world_x - mt.floor(world_x)
-                shade_x = int(fraction_x * 255)
-                shade_tuple = (shade_x, shade_x, shade_x)
-                pg.draw.rect(self.screen, shade_tuple, (test_column, test_row, 4, 4))
+                world_y = self.player.y + depth * dy
+                floor_texture = self.texture_manager.floor_texture
+                texture_width = floor_texture.get_width()
+                texture_height = floor_texture.get_height()
+                texture_x = int(
+                    (world_x - mt.floor(world_x)) * texture_width
+                )
+                texture_y = int(
+                    (world_y - mt.floor(world_y)) * texture_height
+                )
+                texture_x = max(0, min(texture_x, texture_width - 1))
+                texture_y = max(0, min(texture_y, texture_height - 1))
+                floor_colour = floor_texture.get_at((texture_x, texture_y))
+
+                pg.draw.rect(
+                    self.screen,
+                    floor_colour,
+                    (test_column, test_row, 4, 4)
+                )
         # rendering loop
         for screen_x in range(st.WIDTH):
             u = screen_x / (st.WIDTH - 1)
