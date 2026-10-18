@@ -24,6 +24,10 @@ Generate New Maze
 
 The goal is to improve completion times across randomly generated mazes.
 
+## Gameplay Screenshot
+
+![Maze Escape gameplay](screenshots/gameplay.png)
+
 ## Features
 
 - Procedurally generated mazes using depth-first search
