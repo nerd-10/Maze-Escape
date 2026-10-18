@@ -1,82 +1,150 @@
 # Maze Escape
 
-A lightweight **DOOM-inspired first-person maze game** built from scratch using **Python + Pygame**.
+A lightweight **DOOM-inspired first-person maze game** built from scratch using **Python and Pygame**.
 
-The project focuses on learning **raycasting, procedural maze generation, game loops, collision detection, texture rendering, and basic game-engine architecture**.
+The project focuses on learning raycasting, procedural maze generation, game loops, collision detection, texture rendering, and basic game-engine architecture,took help of ChatGPT.
 
 ## Gameplay
 
-The player is placed inside a randomly generated maze and must find the **Ancient Gateway** as quickly as possible.
+The player starts inside a randomly generated maze and must find the **Ancient Gateway** as quickly as possible.
 
 ```text
 Generate Maze
      ↓
-Explore
+   Explore
      ↓
-Find Gateway
+ Find Gateway
      ↓
-Record Time
+  Record Time
      ↓
 Generate New Maze
      ↓
-Repeat
+    Repeat
 ```
 
 The goal is to improve completion times across randomly generated mazes.
+
+## Features
+
+- Procedurally generated mazes using depth-first search
+- First-person movement and camera
+- DDA raycasting renderer
+- Textured walls and floor with ceiling rendering
+- Multiple wall textures
+- Animated Ancient Gateway
+- Completion timer
+- Automatic maze regeneration
+- Lightweight rendering designed for modest hardware
 
 ## Scope
 
 ### Included
 
-* Procedurally generated mazes
-* First-person movement and camera
-* Raycasting renderer
-* Wall, floor and ceiling rendering
-* Multiple wall textures
-* Ancient Gateway
-* Gateway animation
-* Timer
-* Endless maze loop
-* Performance optimization
+- Procedural maze generation
+- First-person movement and collision detection
+- Raycasting and perspective projection
+- Wall, floor, and ceiling rendering
+- Wall texture mapping
+- Gateway animation and completion detection
+- Timer and endless gameplay loop
 
-### Not Included
+### Excluded
 
-* Enemies
-* Combat
-* Weapons
-* Health
-* Inventory
-* Keys / locked doors
-* NPCs
-* Multiplayer
-* Audio
-* Complex menus
+- Enemies and combat
+- Weapons and health
+- Inventory and keys
+- Locked doors and NPCs
+- Multiplayer
+- Audio
+- Complex menus
 
 The scope is intentionally limited to keep the project focused and lightweight.
 
 ## Tech Stack
 
-* **Python**
-* **Pygame**
-* Raycasting
-* Procedural generation
+- Python
+- Pygame
+- Procedural generation
+- DDA raycasting
+- Git and GitHub
 
 ## Project Structure
 
 ```text
-maze-escape/
+Maze-Escape/
 ├── assets/
-├── src/
-│   ├── main.py
-│   ├── game.py
-│   ├── player.py
-│   ├── maze.py
-│   ├── raycaster.py
-│   └── settings.py
-├── README.md
-└── requirements.txt
+│   ├── door/
+│   ├── floor/
+│   └── walls/
+├── animation.py
+├── game.py
+├── gateway.py
+├── main.py
+├── maze.py
+├── player.py
+├── raycaster.py
+├── renderer.py
+├── settings.py
+├── texture.py
+├── requirements.txt
+└── README.md
 ```
 
-## Goal
+Adjust the asset subfolder names or file list if your current repository differs.
 
-Build a small first-person engine from scratch and understand the underlying mathematics and systems instead of relying on an existing 3D engine.
+## Installation
+
+Python 3.10 or newer is recommended, subject to compatibility with the dependencies.
+
+Clone the repository:
+
+```bash
+git clone https://github.com/nerd-10/Maze-Escape
+cd Maze-Escape
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate it on Windows:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Run the Game
+
+```bash
+python main.py
+```
+
+Use the controls implemented in the game to explore the maze and reach the Ancient Gateway.
+
+## Learning Goals
+
+This project is an exercise in building a small first-person rendering engine without relying on an existing 3D engine.
+
+Key concepts include:
+
+- Depth-first search for procedural maze generation
+- Breadth-first search for maze-distance calculations
+- DDA raycasting for wall intersections
+- Camera-space projection and perspective
+- Collision detection
+- Texture mapping and sprite rendering
+- Game-loop timing and state management
+
+## Future Improvements
+
+Potential improvements are limited to polish and reliability, such as rendering refinements, automated tests, performance measurements, and documentation.
+
+New gameplay systems are intentionally outside the current project scope.
