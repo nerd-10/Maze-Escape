@@ -43,6 +43,29 @@ class Renderer:
         camera_depth = relative_x * forward_x + relative_y * forward_y
 
         return camera_x, camera_depth
+    
+    def get_gateway_ray_intersection(self, ray_dx, ray_dy, render_x, render_y):
+        orientation = self.maze.gateway_orientation
+
+        if orientation in ("left", "right"):
+            if abs(ray_dx) < 1e-6:
+                return None
+
+            distance = (render_x - self.player.x) / ray_dx
+
+        else:
+            if abs(ray_dy) < 1e-6:
+                return None
+
+            distance = (render_y - self.player.y) / ray_dy
+
+        if distance <= 0:
+            return None
+
+        hit_x = self.player.x + distance * ray_dx
+        hit_y = self.player.y + distance * ray_dy
+
+        return distance, hit_x, hit_y
 
     def project_to_screen(self, camera_x, camera_depth):
         focal_length = (st.HEIGHT / 2) / (mt.tan(st.FOV / 2))
@@ -207,78 +230,100 @@ class Renderer:
 
     def render_gateway(self):
         gateway_x, gateway_y = self.maze.gateway_pos
-        gateway_orientation = self.maze.gateway_orientation
+        orientation = self.maze.gateway_orientation
+
         render_x, render_y = gateway_x, gateway_y
-        if gateway_orientation == "up":
+
+        if orientation == "up":
             render_y = gateway_y + 0.5 - 0.01
-        elif gateway_orientation == "down":
+        elif orientation == "down":
             render_y = gateway_y - 0.5 + 0.01
-        elif gateway_orientation == "left":
+        elif orientation == "left":
             render_x = gateway_x + 0.5 - 0.01
-        elif gateway_orientation == "right":
+        elif orientation == "right":
             render_x = gateway_x - 0.5 + 0.01
+
         half_width = 0.8 / 2
-        if gateway_orientation in ("up", "down"):
-            endpoint_a = (render_x - half_width, render_y)
-            endpoint_b = (render_x + half_width, render_y)
-        else:
-            endpoint_a = (render_x, render_y - half_width)
-            endpoint_b = (render_x, render_y + half_width)
+        frame = self.gateway_animation.get_current_frame()
+        texture_width, texture_height = frame.get_size()
 
-        # Project the two endpoints into camera space.
-        camera_x_a, camera_depth_a = self.project_world_point(*endpoint_a)
-        camera_x_b, camera_depth_b = self.project_world_point(*endpoint_b)
-        clipped_points = self.clip_segment_near_plane(
-            (camera_x_a, camera_depth_a),
-            (camera_x_b, camera_depth_b),
-        )
-        if clipped_points is None:
-            return
+        forward_x, forward_y, right_x, right_y = self.get_camera_vectors()
+        half_fov = mt.tan(st.FOV / 2)
 
-        (camera_x_a, camera_depth_a), (camera_x_b, camera_depth_b) = clipped_points
+        for screen_x in range(st.WIDTH):
+            u = screen_x / (st.WIDTH - 1)
+            camera_x = (2 * u - 1) * half_fov
 
-        screen_x_a = self.project_to_screen(camera_x_a, camera_depth_a)
-        screen_x_b = self.project_to_screen(camera_x_b, camera_depth_b)
+            ray_dx = forward_x + camera_x * right_x
+            ray_dy = forward_y + camera_x * right_y
 
-        gateway_screen_width = abs(screen_x_b - screen_x_a)
-        average_depth = (camera_depth_a + camera_depth_b) / 2
-        gateway_screen_x = (screen_x_a + screen_x_b) / 2
-        if average_depth > 0 and self.is_point_visible(gateway_screen_x, average_depth):
-            gateway_screen_height = (
-                st.GATEWAY_HEIGHT
-                * (st.HEIGHT / 2)
-                / (average_depth * mt.tan(st.FOV / 2))
-            )
-            screen_center_y = st.HEIGHT / 2
-            top = screen_center_y - (gateway_screen_height / 2)
-            left = min(screen_x_a, screen_x_b)
-            gateway_frame = self.gateway_animation.get_current_frame()
-            max_sprite_width = st.WIDTH * 2
-            max_sprite_height = st.HEIGHT * 2
+            intersection = self.get_gateway_ray_intersection(
+                ray_dx, ray_dy, render_x, render_y
+                )
 
-            scaled_width = max(1, min(int(gateway_screen_width), max_sprite_width))
-            scaled_height = max(1, min(int(gateway_screen_height), max_sprite_height))
-            scaled_gateway = pg.transform.scale(
-                gateway_frame,
-                (scaled_width, scaled_height),
-            )
+            if intersection is None:
+                continue
 
-            draw_start = max(0, int(min(screen_x_a, screen_x_b)))
-            draw_end = min(st.WIDTH, int(max(screen_x_a, screen_x_b)) + 1)
+            distance, hit_x, hit_y = intersection
 
-            for screen_x in range(draw_start, draw_end):
-                wall_depth = self.wall_depths[screen_x]
-                if screen_x_b != screen_x_a:
-                    t = (screen_x - screen_x_a) / (screen_x_b - screen_x_a)
-                    gateway_depth_at_column = 1 / (
-                        (1 - t) / camera_depth_a + t / camera_depth_b
-                    )
-                else:
-                    gateway_depth_at_column = average_depth
-                if gateway_depth_at_column < wall_depth:
-                    source_x = screen_x - int(left)
-                    self.screen.blit(
-                        scaled_gateway,
-                        (screen_x, top),
-                        (source_x, 0, 1, scaled_height),
-                    )
+        # Check whether the ray hits within the gateway's width.
+            if orientation in ("up", "down"):
+                offset = hit_x - render_x
+            else:
+                offset = hit_y - render_y
+
+            if not -half_width <= offset <= half_width:
+                continue
+
+        # Camera-space depth corrects perspective projection.
+            camera_depth = (
+                (hit_x - self.player.x) * forward_x
+                + (hit_y - self.player.y) * forward_y
+                )
+
+            if camera_depth <= 0.001:
+                continue
+
+        # Hide the gateway behind nearer walls.
+            if camera_depth >= self.wall_depths[screen_x]:
+                continue
+
+            texture_x = int(
+                ((offset + half_width) / (2 * half_width)) * texture_width
+                )
+            texture_x = max(0, min(texture_x, texture_width - 1))
+
+            projected_height = (
+                st.GATEWAY_HEIGHT * (st.HEIGHT / 2)
+                / (camera_depth * half_fov)
+                )
+
+            top = (st.HEIGHT / 2) - projected_height / 2
+            bottom = (st.HEIGHT / 2) + projected_height / 2
+
+            draw_top = max(0, int(top))
+            draw_bottom = min(st.HEIGHT, int(bottom))
+
+            if draw_bottom <= draw_top:
+                continue
+
+        # Map visible screen rows to the corresponding sprite rows.
+            top_ratio = (draw_top - top) / projected_height
+            bottom_ratio = (draw_bottom - top) / projected_height
+
+            texture_top = max(0, min(
+                int(top_ratio * texture_height), texture_height - 1
+                ))
+            texture_bottom = max(texture_top + 1, min(
+                int(bottom_ratio * texture_height), texture_height
+                ))
+
+            sprite_column = frame.subsurface(
+                (texture_x, texture_top, 1, texture_bottom - texture_top)
+                )
+
+            scaled_column = pg.transform.scale(
+                sprite_column, (1, draw_bottom - draw_top)
+                )
+
+            self.screen.blit(scaled_column, (screen_x, draw_top))
