@@ -1,28 +1,14 @@
 # Maze Escape
 
-A lightweight **DOOM-inspired first-person maze game** built from scratch using **Python and Pygame**.
+A lightweight **DOOM-inspired first-person maze game** built with Python and Pygame.
 
-The project focuses on learning raycasting, procedural maze generation, game loops, collision detection, texture rendering, and basic game-engine architecture,took help of ChatGPT.
+Explore a procedurally generated maze, locate the Ancient Gateway, and complete each run as quickly as possible. The project explores raycasting, procedural generation, collision detection, texture rendering, and basic game-engine architecture.
+
+**Development note:** ChatGPT was used as a learning and development aid throughout the project.
 
 ## Gameplay
 
-The player starts inside a randomly generated maze and must find the **Ancient Gateway** as quickly as possible.
-
-```text
-Generate Maze
-     ↓
-   Explore
-     ↓
- Find Gateway
-     ↓
-  Record Time
-     ↓
-Generate New Maze
-     ↓
-    Repeat
-```
-
-The goal is to improve completion times across randomly generated mazes.
+Each run generates a maze for the player to explore. Reaching the Ancient Gateway records the completion time and starts a new maze.
 
 ## Gameplay Screenshot
 
@@ -39,6 +25,17 @@ The goal is to improve completion times across randomly generated mazes.
 - Completion timer
 - Automatic maze regeneration
 - Lightweight rendering designed for modest hardware
+
+## Controls
+
+| Key | Action |
+|---|---|
+| `W` | Move forward |
+| `S` | Move backward |
+| `A` | Move left |
+| `D` | Move right |
+| `←` / `→` | Rotate the camera left / right |
+
 
 ## Scope
 
